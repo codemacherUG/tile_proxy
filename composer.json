@@ -1,0 +1,30 @@
+
+{
+    "name": "codemacher/tile_proxy",
+    "description": "",
+    "type": "typo3-cms-extension",
+    "version": "0.1.0",
+    "authors": [
+      {
+        "name": "Thomas Rokohl",
+        "homepage": "https://codemacher.de"
+      }
+    ],
+    "keywords": [
+
+    ],
+    "autoload": {
+      "psr-4": {
+          "Codemacher\\TileProxy\\": "Classes"
+      }
+    },
+    "extra": {
+      "typo3/cms": {
+        "extension-key": "tile_proxy"
+      }
+    },
+    "require": {
+      "typo3/cms-core": "^11.5"
+    }    
+  }
+  

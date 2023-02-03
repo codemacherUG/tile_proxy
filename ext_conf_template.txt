@@ -1,0 +1,18 @@
+# cat=basic; type=string; label=Bonding Box of permitted Tiles
+bbox = 11.86,51.41,12.07,51.55 # Halle Saale
+
+# cat=basic; type=string; label=Cache header time sended to the client
+cacheHeaderTime = 31536000
+
+# cat=basic; type=string; label=Cache time for each tile 
+cacheFileTime = 5256000
+
+# cat=basic/images; type=string; label=Path to error tile png
+errorTilePath = 
+
+# cat=basic/images; type=string; label=Path to empty tile png
+emptyTilePath = 
+
+
+
+
