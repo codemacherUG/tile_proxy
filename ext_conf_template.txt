@@ -1,7 +1,7 @@
 # cat=basic; type=string; label=Endpoint Slug 
 slug = /tile-proxy
 
-# cat=basic; type=string; label=Bonding Box of permitted Tiles
+# cat=basic; type=string; label=Bounding Box of permitted Tiles
 bbox = 11.86,51.41,12.07,51.55 # Halle Saale
 
 # cat=basic; type=string; label=Cache header time sended to the client
