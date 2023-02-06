@@ -6,34 +6,31 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
-
-use Codemacher\TileProxy\CachedTileProxy;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Service\FlexFormService;
+
+
+use Codemacher\TileProxy\Controller\CachedTileProxyController;
 
 class TileProxyMiddleware implements MiddlewareInterface
 {
 
-    /** @var string */
-    private $slug;
-
-    public function __construct( ) {
-
-        $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class);
-        $this->slug = $extConf->get('tile_proxy', 'slug') ?? "/tile-proxy";
-    }
+    CONST DOKTYPE = 601;
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (str_starts_with($request->getRequestTarget(), $this->slug)) {
-
+        
+        $controller = $request->getAttribute('frontend.controller');
+        
+        if ((int)$controller->page['doktype'] === TileProxyMiddleware::DOKTYPE) {
+            $flexform = $controller->page['tx_tileproxy_flexform'];
+            $ffs = GeneralUtility::makeInstance(FlexFormService::class);
+            $flex = $ffs->convertFlexFormContentToArray($flexform);
+            $flexSettings = $flex != null && array_key_exists("settings",$flex) ? $flex["settings"] : [];
             $parms = $request->getQueryParams();
             if (!isset($parms['type'], $parms['s'], $parms['x'], $parms['y'], $parms['z'])) {
-                return $handler->handle($request);
+                return new JsonResponse(["error" => 1000], 403);
             }
             $referrer = @$_SERVER["HTTP_REFERER"];
             $host = @$_SERVER["HTTP_HOST"];
@@ -49,8 +46,8 @@ class TileProxyMiddleware implements MiddlewareInterface
             }
             if (!$isValid) return new JsonResponse(["error" => 1001], 403);
 
-            $proxy =  GeneralUtility::makeInstance(CachedTileProxy::class);
-            return $proxy->process($request, $handler);
+            $proxy =  GeneralUtility::makeInstance(CachedTileProxyController::class);
+            return $proxy->process($flexSettings,$request, $handler);
         }
         return $handler->handle($request);
     }

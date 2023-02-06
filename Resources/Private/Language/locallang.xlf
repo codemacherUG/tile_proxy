@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file source-language="en" datatype="plaintext" date="2023-02-06T09:12:34Z" product-name="tile_proxy">
+		<header/>
+		<body>
+			<trans-unit id="api_dok_type" resname="api_dok_type">
+				<source>Tile Proxy Endpoint</source>
+			</trans-unit>
+			<trans-unit id="tx_tileproxy_flexform" resname="tx_tileproxy_flexform">
+				<source>Tile Proxy Settings</source>
+			</trans-unit>
+      <trans-unit id="tx_tileproxy_flexform.settings.bbox" resname="tx_tileproxy_flexform.settings.bbox">
+				<source>Bounding Box of permitted Tiles</source>
+			</trans-unit>
+      <trans-unit id="tx_tileproxy_flexform.settings.cacheTime" resname="tx_tileproxy_flexform.settings.cacheTime">
+				<source>Caching Time (in s) for each tile</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
