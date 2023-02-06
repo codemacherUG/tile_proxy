@@ -13,7 +13,6 @@ use Codemacher\TileProxy\Middleware\TileProxyMiddleware;
 
 call_user_func(function ($extKey = 'tile_proxy') {
 
-
   $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class);
 
   $deleteTileOnCacheCleanUp = intval($extConf->get('tile_proxy', 'deleteTileOnCacheCleanUp') ?? 1);
@@ -26,8 +25,6 @@ call_user_func(function ($extKey = 'tile_proxy') {
       'groups' => ['all'],
     ];
   }
-
-
 
   $iconRegistry = GeneralUtility::makeInstance(IconRegistry::class);
   $iconRegistry
