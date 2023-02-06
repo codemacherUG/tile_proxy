@@ -84,7 +84,7 @@ class CachedTileProxy
     $x = intval($parms['x']);
     $y = intval($parms['y']);
     $z = intval($parms['z']);
-    $tileproxytype = $parms['tileproxytype'];
+    $tileproxytype = $parms['type'];
 
 
     if ($s != 'a' && $s != 'b' && $s != 'c') {
