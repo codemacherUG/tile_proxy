@@ -30,7 +30,7 @@ class TileProxyMiddleware implements MiddlewareInterface
                 break;
             }
         }
-       if(!$isValid) return new JsonResponse(["error" => 1001],403);
+      // if(!$isValid) return new JsonResponse(["error" => 1001],403);
 
         $proxy =  GeneralUtility::makeInstance(CachedTileProxy::class);
         return $proxy->process($request,$handler);
