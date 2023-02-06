@@ -11,14 +11,14 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use Codemacher\TileProxy\Cache\CacheBackend;
 use Codemacher\TileProxy\Middleware\TileProxyMiddleware;
 
-call_user_func(function ($extKey='tile_proxy') {
+call_user_func(function ($extKey = 'tile_proxy') {
 
-  
+
   $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class);
-    
+
   $deleteTileOnCacheCleanUp = intval($extConf->get('tile_proxy', 'deleteTileOnCacheCleanUp') ?? 1);
 
-  if($deleteTileOnCacheCleanUp) {
+  if ($deleteTileOnCacheCleanUp) {
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['tile-proxy-cache'] = [
       'frontend' => VariableFrontend::class,
       'backend' => CacheBackend::class,
@@ -28,20 +28,19 @@ call_user_func(function ($extKey='tile_proxy') {
   }
 
 
-  
+
   $iconRegistry = GeneralUtility::makeInstance(IconRegistry::class);
   $iconRegistry
-      ->registerIcon(
-          'tile-proxy',
-          SvgIconProvider::class,
-          [
-              'source' => 'EXT:' . $extKey . '/Resources/Public/Icons/apps-pagetree-page-tileproxy.svg',
-          ]
-      );
+    ->registerIcon(
+      'tile-proxy',
+      SvgIconProvider::class,
+      [
+        'source' => 'EXT:' . $extKey . '/Resources/Public/Icons/apps-pagetree-page-tileproxy.svg',
+      ]
+    );
 
   // Allow backend users to drag and drop the new page type:
   ExtensionManagementUtility::addUserTSConfig(
-      'options.pageTree.doktypesToShowInNewPageDragArea := addToList(' . TileProxyMiddleware::DOKTYPE . ')'
+    'options.pageTree.doktypesToShowInNewPageDragArea := addToList(' . TileProxyMiddleware::DOKTYPE . ')'
   );
-
 });
