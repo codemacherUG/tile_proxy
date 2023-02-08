@@ -1,5 +1,5 @@
 # cat=basic; type=string; label=Delete all cached tile if the cache is cleared
-deleteTileOnCacheCleanUp = 1
+deleteTileOnCacheCleanUp = 0
 
 # cat=basic; type=string; label=Path to error tile png
 errorTilePath = 

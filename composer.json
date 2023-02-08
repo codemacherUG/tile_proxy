@@ -1,30 +1,38 @@
-
 {
-    "name": "codemacher/tile_proxy",
-    "description": "",
-    "type": "typo3-cms-extension",
-    "version": "0.1.0",
-    "authors": [
-      {
-        "name": "Thomas Rokohl",
-        "homepage": "https://codemacher.de"
-      }
-    ],
-    "keywords": [
-
-    ],
-    "autoload": {
-      "psr-4": {
-          "Codemacher\\TileProxy\\": "Classes"
-      }
-    },
-    "extra": {
-      "typo3/cms": {
-        "extension-key": "tile_proxy"
-      }
-    },
-    "require": {
-      "typo3/cms-core": "^11.5"
-    }    
+  "name": "codemacher/tile_proxy",
+  "description": "OSM Tile Proxy",
+  "type": "typo3-cms-extension",
+  "homepage": "https://extensions.typo3.org/extension/tile_proxy",
+  "authors": [
+    {
+      "name": "Thomas Rokohl",
+      "homepage": "https://codemacher.de"
+    }
+  ],
+  "license": [
+    "GPL-2.0-or-later"
+  ],
+  "keywords": [
+    "TYPO3",
+    "extension",
+    "OSM",
+    "OpenStreetMap",
+    "DSGVO",
+    "GDPR",
+    "Tile",
+    "Proxy"
+  ],
+  "autoload": {
+    "psr-4": {
+      "Codemacher\\TileProxy\\": "Classes"
+    }
+  },
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "tile_proxy"
+    }
+  },
+  "require": {
+    "typo3/cms-core": "^11.5"
   }
-  
+}

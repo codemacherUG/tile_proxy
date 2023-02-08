@@ -15,7 +15,7 @@ call_user_func(function ($extKey = 'tile_proxy') {
 
   $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class);
 
-  $deleteTileOnCacheCleanUp = intval($extConf->get('tile_proxy', 'deleteTileOnCacheCleanUp') ?? 1);
+  $deleteTileOnCacheCleanUp = intval($extConf->get('tile_proxy', 'deleteTileOnCacheCleanUp') ?? 0);
 
   if ($deleteTileOnCacheCleanUp) {
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['tile-proxy-cache'] = [
