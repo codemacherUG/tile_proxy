@@ -21,7 +21,7 @@ class TileProxyMiddleware implements MiddlewareInterface
     {
 
         $parms = $request->getQueryParams();
-        if (array_key_exists("tileproxytype", $parms)) {
+        if (array_key_exists("provider", $parms)) {
             $pageArguments = $request->getAttribute('routing', null);
             $pageRecord = BackendUtility::getRecord("pages", $pageArguments['pageId']);
             if ($pageRecord["doktype"] == TileProxyMiddleware::DOKTYPE) {
@@ -30,7 +30,7 @@ class TileProxyMiddleware implements MiddlewareInterface
                 $flex = $ffs->convertFlexFormContentToArray($flexform);
                 $flexSettings = $flex != null && array_key_exists("settings", $flex) ? $flex["settings"] : [];
                 $parms = $request->getQueryParams();
-                if (!isset($parms['tileproxytype'], $parms['s'], $parms['x'], $parms['y'], $parms['z'])) {
+                if (!isset($parms['provider'], $parms['s'], $parms['x'], $parms['y'], $parms['z'])) {
                     return new JsonResponse(["error" => 1000], 403);
                 }
                 $referrer = @$_SERVER["HTTP_REFERER"];

@@ -61,9 +61,9 @@ class CachedTileProxyController
       ->withBody($this->streamFactory->createStream($imgData));
   }
 
-  public function buildUrlByType($tileproxytype, $s, $z, $x, $y): string
+  public function buildUrlByType($provider, $s, $z, $x, $y): string
   {
-    switch ($tileproxytype) {
+    switch ($provider) {
       case "osm":
         return "https://$s.tile.openstreetmap.org/$z/$x/$y.png";
     }
@@ -83,13 +83,13 @@ class CachedTileProxyController
     $x = intval($parms['x']);
     $y = intval($parms['y']);
     $z = intval($parms['z']);
-    $tileproxytype = $parms['tileproxytype'];
+    $provider = $parms['provider'];
 
     if ($s != 'a' && $s != 'b' && $s != 'c') {
       return new JsonResponse(["error" => 1002], 403);
     }
 
-    if (!in_array($tileproxytype,self::VALID_TYPES)) {
+    if (!in_array($provider,self::VALID_TYPES)) {
       return new JsonResponse(["error" => 1003], 403);
     }
 
@@ -97,11 +97,11 @@ class CachedTileProxyController
     if (!$this->isInBoundingBox($bbox,$z, $x, $y)) {
       return $this->createResponse($this->emptyTilePath,$cacheTime);
     } else {
-      $fullUrl = $this->buildUrlByType($tileproxytype, $s, $z, $x, $y);
+      $fullUrl = $this->buildUrlByType($provider, $s, $z, $x, $y);
       if(empty($fullUrl)) {
         return new JsonResponse(["error" => 1004], 403);
       }
-      $cacheTileFile = $this->cacheDir . "/$tileproxytype/$z/$x/$y.png";
+      $cacheTileFile = $this->cacheDir . "/$provider/$z/$x/$y.png";
 
       $isChachValid = true;
       if (!file_exists($cacheTileFile)) {

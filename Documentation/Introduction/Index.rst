@@ -31,7 +31,25 @@ If the slug for your page is e.g. tile-proxy, the data can be retrieved via URL 
 
 ..  code-block:: javascript
 
-    /tile-proxy/?tileproxytype=osm&z={z}&x={x}&y={y}&s={s}
+    /tile-proxy/?provider=osm&z={z}&x={x}&y={y}&s={s}
+
+**provider**
+
+At the moment only osm (OpenStreetMap) is supported, so the value must be osm.
+
+**z**
+
+zoom level (https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
+
+**x**
+
+x-tile coordinate (https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
+
+**s**
+
+OSM subdomain for CDN
+
+
 
 If the tile must be loaded and is not cached, this request will be mapped to:
 
