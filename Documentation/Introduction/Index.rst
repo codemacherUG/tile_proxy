@@ -11,7 +11,7 @@ Introduction
 What does it do?
 ================
 
-With Tile Proxy you can integrate OpenStreetMap maps GDPR in a compliant way without any third party requests form the client.
+With Tile Proxy you can integrate OpenStreetMap maps GDPR in a compliant way without any third party requests from the client.
 For a given area, the data is loaded from OpenStreetMap and cached, therefore you do not need a
 cookie banner or blocker to use OpenStreetMap.
 
