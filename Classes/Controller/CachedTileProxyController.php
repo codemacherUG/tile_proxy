@@ -61,9 +61,9 @@ class CachedTileProxyController
       ->withBody($this->streamFactory->createStream($imgData));
   }
 
-  public function buildUrlByType($type, $s, $z, $x, $y): string
+  public function buildUrlByType($tileproxytype, $s, $z, $x, $y): string
   {
-    switch ($type) {
+    switch ($tileproxytype) {
       case "osm":
         return "https://$s.tile.openstreetmap.org/$z/$x/$y.png";
     }
@@ -83,7 +83,7 @@ class CachedTileProxyController
     $x = intval($parms['x']);
     $y = intval($parms['y']);
     $z = intval($parms['z']);
-    $tileproxytype = $parms['type'];
+    $tileproxytype = $parms['tileproxytype'];
 
     if ($s != 'a' && $s != 'b' && $s != 'c') {
       return new JsonResponse(["error" => 1002], 403);

@@ -50,7 +50,7 @@ To try it out, simply save the file in the typo3 webroot and open it in the brow
         northEast = L.latLng(51.55, 12.07),
         bounds = L.latLngBounds(southWest, northEast);
 
-        const tiles = L.tileLayer('/tile-proxy/?type=osm&z={z}&x={x}&y={y}&s={s}', {
+        const tiles = L.tileLayer('/tile-proxy/?tileproxytype=osm&z={z}&x={x}&y={y}&s={s}', {
         maxBounds: bounds,
         minZoom: 13,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'

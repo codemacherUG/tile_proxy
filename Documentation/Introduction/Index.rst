@@ -31,7 +31,7 @@ If the slug for your page is e.g. tile-proxy, the data can be retrieved via URL 
 
 ..  code-block:: javascript
 
-    /tile-proxy/?type=osm&z={z}&x={x}&y={y}&s={s}
+    /tile-proxy/?tileproxytype=osm&z={z}&x={x}&y={y}&s={s}
 
 If the tile must be loaded and is not cached, this request will be mapped to:
 

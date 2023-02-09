@@ -2,14 +2,12 @@
 
 return [
     'frontend' => [
-        'codemacher/tile_proxy/tileproxy' => [
+        'codemacher/tile-proxy/request-handler' => [
             'target' => \Codemacher\TileProxy\Middleware\TileProxyMiddleware::class,
-            'after' => [
-                'typo3/cms-frontend/tsfe'
-            ],
             'before' => [
-                'typo3/cms-frontend/prepare-tsfe-rendering'
+                'typo3/cms-frontend/page-argument-validator'
             ]
         ],
+
     ],
 ];
