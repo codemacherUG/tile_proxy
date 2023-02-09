@@ -40,6 +40,7 @@ This documentation is for the TYPO3 extension tile_proxy.
     Installation/Index
     Configuration/Index
     Administration/Index
+    Usage/Index
     Example/Index
 
 ..  Meta Menu
