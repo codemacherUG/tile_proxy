@@ -2,7 +2,7 @@
 <?php
 $EM_CONF[$_EXTKEY] = [
 	'title' => 'TileProxy',
-	'description' => 'Integrates a OpenStreetMap tile proxy for GDPR compliant integration.',
+	'description' => 'Integrates an OpenStreetMap tile proxy for GDPR compliant integration.',
 	'author' => 'Thomas Rokohl',
 	'author_email' => 'webmaster@codemacher.de',
 	'category' => 'plugin',

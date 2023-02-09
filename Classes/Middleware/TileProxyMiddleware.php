@@ -20,8 +20,8 @@ class TileProxyMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
 
-        $parms = $request->getQueryParams();
-        if (array_key_exists("provider", $parms)) {
+        $params = $request->getQueryParams();
+        if (array_key_exists("provider", $params)) {
             $pageArguments = $request->getAttribute('routing', null);
             $pageRecord = BackendUtility::getRecord("pages", $pageArguments['pageId']);
             if ($pageRecord["doktype"] == TileProxyMiddleware::DOKTYPE) {
@@ -29,8 +29,8 @@ class TileProxyMiddleware implements MiddlewareInterface
                 $ffs = GeneralUtility::makeInstance(FlexFormService::class);
                 $flex = $ffs->convertFlexFormContentToArray($flexform);
                 $flexSettings = $flex != null && array_key_exists("settings", $flex) ? $flex["settings"] : [];
-                $parms = $request->getQueryParams();
-                if (!isset($parms['provider'], $parms['s'], $parms['x'], $parms['y'], $parms['z'])) {
+                $params = $request->getQueryParams();
+                if (!isset($params['provider'], $params['s'], $params['x'], $params['y'], $params['z'])) {
                     return new JsonResponse(["error" => 1000], 403);
                 }
                 $referrer = @$_SERVER["HTTP_REFERER"];

@@ -12,7 +12,7 @@ Installation Type
 Composer
 --------
 
-You can install tile proxy with following shell command:
+You can install tile proxy with the following shell command:
 
 .. code-block:: bash
 
@@ -21,9 +21,9 @@ You can install tile proxy with following shell command:
 Extensionmanager
 ----------------
 
-If you want to install tile proxy traditionally with Extensionmanager, follow these steps:
+If you want to install tile proxy traditionally with ExtensionManager, follow these steps:
 
-#. Visit ExtensionManager
+#. Open ExtensionManager
 
 #. Switch over to `Get Extensions`
 

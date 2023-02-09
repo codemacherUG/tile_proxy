@@ -10,9 +10,9 @@ Usage
 Endpoint
 ================
 
-With this extension you can define a page in the Typo3 backend as an endpoint for maps.
+With this extension you can define a page in the TYPO3 backend as an endpoint for maps.
 
-If the slug for your page is e.g. tile-proxy, the data can be retrieved via URL domain:
+If the slug for your page is e.g. tile-proxy, the data can be retrieved from:
 
 ..  code-block:: javascript
 
@@ -23,7 +23,7 @@ Arguments
 
 **provider**
 
-At the moment only osm (OpenStreetMap) is supported, so the value must be osm.
+Currently only osm (OpenStreetMap) is supported, so the value must be osm.
 
 **z**
 
@@ -32,6 +32,10 @@ zoom level (https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
 **x**
 
 x-tile coordinate (https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
+
+**y**
+
+y-tile coordinate (https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
 
 **s**
 

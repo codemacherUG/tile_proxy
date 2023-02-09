@@ -1,8 +1,8 @@
-# cat=basic; type=string; label=Delete all cached tile if the cache is cleared
+# cat=basic; type=string; label=Delete all cached tiles if the cache is cleared
 deleteTileOnCacheCleanUp = 0
 
-# cat=basic; type=string; label=Path to error tile png
+# cat=basic; type=string; label=Path to error tile png (absolute)
 errorTilePath = 
 
-# cat=basic; type=string; label=Path to empty tile png
+# cat=basic; type=string; label=Path to empty tile png (absolute)
 emptyTilePath = 
