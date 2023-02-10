@@ -12,6 +12,11 @@
   "license": [
     "GPL-2.0-or-later"
   ],
+  "support": {
+		"docs": "https://docs.typo3.org/p/codemacher/tile_proxy/main/en-us/",
+		"issues": "https://github.com/codemacherUG/tile_proxy/issues",
+		"source": "https://github.com/codemacherUG/tile_proxy"
+	},
   "keywords": [
     "TYPO3 CMS",
     "extension",
