@@ -60,7 +60,23 @@ Leaflet Example
 
     // Initialize the base layer
     L.tileLayer('/tile-proxy/?provider=osm&z={z}&x={x}&y={y}&s={s}', {
-      attribution: '&copy; OSM Mapnik <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      attribution: '&#169; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
 
     }).addTo(map);
+
+
+OpenLayer Example
+================
+
+..  code-block:: javascript
+
+    var osmSource = new ol.source.XYZ({
+        attributions : '&#169; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
+        urls: [
+          '/tile-proxy/?provider=osm&z={z}&x={x}&y={y}&s=a',
+          '/tile-proxy/?provider=osm&z={z}&x={x}&y={y}&s=b',
+          '/tile-proxy/?provider=osm&z={z}&x={x}&y={y}&s=c',
+        ]
+    });
+
 
