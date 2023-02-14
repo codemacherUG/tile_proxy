@@ -73,9 +73,9 @@ class CachedTileProxyController
   public function process(array $flexSettings, ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
   {
     $parms = $request->getQueryParams();
-    $bboxStr = array_key_exists("bbox", $flexSettings) ? $flexSettings['bbox'] : "11.86,51.41,12.07,51.55";
+    $bboxStr = array_key_exists('bbox', $flexSettings) ? $flexSettings['bbox'] : '11.86,51.41,12.07,51.55';
     $bbox = explode(',', $bboxStr);
-    $cacheTimeStr =  array_key_exists("cacheTime", $flexSettings) ? $flexSettings['cacheTime'] : "31536000";
+    $cacheTimeStr =  array_key_exists('cacheTime', $flexSettings) ? $flexSettings['cacheTime'] : '31536000';
     $cacheTime = intval($flexSettings['cacheTime'] ??  $cacheTimeStr);
 
     
@@ -86,11 +86,11 @@ class CachedTileProxyController
     $provider = $parms['provider'];
 
     if ($s != 'a' && $s != 'b' && $s != 'c') {
-      return new JsonResponse(["error" => 1002], 403);
+      return new JsonResponse(['error' => 1002], 403);
     }
 
     if (!in_array($provider,self::VALID_TYPES)) {
-      return new JsonResponse(["error" => 1003], 403);
+      return new JsonResponse(['error' => 1003], 403);
     }
 
     $cacheTileFile = "";
@@ -99,7 +99,7 @@ class CachedTileProxyController
     } else {
       $fullUrl = $this->buildUrlByType($provider, $s, $z, $x, $y);
       if(empty($fullUrl)) {
-        return new JsonResponse(["error" => 1004], 403);
+        return new JsonResponse(['error' => 1004], 403);
       }
       $cacheTileFile = $this->cacheDir . "/$provider/$z/$x/$y.png";
 
@@ -130,7 +130,7 @@ class CachedTileProxyController
     $ch = curl_init($tileURL);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    $user_agent = 'CM Tile-Proxy-PHP/0.1';
+    $user_agent = 'CM Tile-Proxy-PHP/1.0';
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_HEADER, 0);
     curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);

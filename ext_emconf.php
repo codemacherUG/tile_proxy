@@ -3,16 +3,16 @@
 $EM_CONF[$_EXTKEY] = [
 	'title' => 'TileProxy',
 	'description' => 'Integrates an OpenStreetMap tile proxy for GDPR compliant integration.',
-	'author' => 'Thomas Rokohl',
+	'author' => 'Thomas Rokohl (codemacher)',
 	'author_email' => 'webmaster@codemacher.de',
 	'category' => 'plugin',
 	'author_company' => 'codemacher',
 	'state' => 'stable',
 	'clearCacheOnLoad' => 1,
-	'version' => '1.0.2',
+	'version' => '1.0.3',
 	'constraints' => [
 		'depends' => [
-			'typo3' => '11.5.0-11.5.99'
+			'typo3' => '11.5.0-12.2.99'
 		],
 		'conflicts' => [],
 		'suggests' => []

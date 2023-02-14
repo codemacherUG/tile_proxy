@@ -21,20 +21,20 @@ class TileProxyMiddleware implements MiddlewareInterface
     {
 
         $params = $request->getQueryParams();
-        if (array_key_exists("provider", $params)) {
+        if (array_key_exists('provider', $params)) {
             $pageArguments = $request->getAttribute('routing', null);
             $pageRecord = BackendUtility::getRecord("pages", $pageArguments['pageId']);
-            if ($pageRecord["doktype"] == TileProxyMiddleware::DOKTYPE) {
+            if ($pageRecord['doktype'] == TileProxyMiddleware::DOKTYPE) {
                 $flexform = array_key_exists('tx_tileproxy_flexform', $pageRecord) ? $pageRecord['tx_tileproxy_flexform'] : "";
                 $ffs = GeneralUtility::makeInstance(FlexFormService::class);
                 $flex = $ffs->convertFlexFormContentToArray($flexform);
                 $flexSettings = $flex != null && array_key_exists("settings", $flex) ? $flex["settings"] : [];
                 $params = $request->getQueryParams();
                 if (!isset($params['provider'], $params['s'], $params['x'], $params['y'], $params['z'])) {
-                    return new JsonResponse(["error" => 1000], 403);
+                    return new JsonResponse(['error' => 1000], 403);
                 }
-                $referrer = @$_SERVER["HTTP_REFERER"];
-                $host = @$_SERVER["HTTP_HOST"];
+                $referrer = @$_SERVER['HTTP_REFERER'];
+                $host = @$_SERVER['HTTP_HOST'];
 
                 $valids = ["://$host", "://www.$host", "://localhost"];
 
@@ -47,7 +47,7 @@ class TileProxyMiddleware implements MiddlewareInterface
                         }
                     }
                 }
-                if (!$isValid) return new JsonResponse(["error" => 1001], 403);
+                if (!$isValid) return new JsonResponse(['error' => 1001], 403);
 
                 $proxy =  GeneralUtility::makeInstance(CachedTileProxyController::class);
                 return $proxy->process($flexSettings, $request, $handler);
