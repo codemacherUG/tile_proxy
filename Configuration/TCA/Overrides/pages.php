@@ -1,11 +1,12 @@
 <?php
 
+
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
-use Codemacher\TileProxy\Middleware\TileProxyMiddleware;
+
+use Codemacher\TileProxy\Constants;
 
 (function ($extKey = 'tile_proxy', $table = 'pages') {
-
 
   // Add new page type as possible select item:
   ExtensionManagementUtility::addTcaSelectItem(
@@ -13,7 +14,7 @@ use Codemacher\TileProxy\Middleware\TileProxyMiddleware;
     'doktype',
     [
       'LLL:EXT:' . $extKey . '/Resources/Private/Language/locallang.xlf:api_dok_type',
-      TileProxyMiddleware::DOKTYPE,
+      Constants::DOKTYPE,
       'EXT:' . $extKey . '/Resources/Public/Icons/apps-pagetree-page-tileproxy.svg',
       'special'
 
@@ -40,10 +41,10 @@ use Codemacher\TileProxy\Middleware\TileProxyMiddleware;
       // add icon for new page type:
       'ctrl' => [
         'typeicon_classes' => [
-          TileProxyMiddleware::DOKTYPE => 'tile-proxy',
-          TileProxyMiddleware::DOKTYPE . '-contentFromPid' => "tile-proxy",
-          TileProxyMiddleware::DOKTYPE . '-root' => "tile-proxy",
-          TileProxyMiddleware::DOKTYPE . '-hideinmenu' => "tile-proxy",
+          Constants::DOKTYPE => 'tile-proxy',
+          Constants::DOKTYPE . '-contentFromPid' => "tile-proxy",
+          Constants::DOKTYPE . '-root' => "tile-proxy",
+          Constants::DOKTYPE . '-hideinmenu' => "tile-proxy",
         ],
       ],
       'palettes' => [
@@ -54,7 +55,7 @@ use Codemacher\TileProxy\Middleware\TileProxyMiddleware;
       ],
       // add all page standard fields and tabs to your new page type
       'types' => [
-        TileProxyMiddleware::DOKTYPE => [
+        Constants::DOKTYPE => [
           'showitem' => '--div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general,
                     --palette--;;standard, 
                     --palette--;;title_tileproxy,

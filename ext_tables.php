@@ -2,9 +2,9 @@
 
 defined('TYPO3') or die();
 
-(function () {
+(static function (): void {
   // Add new page type:
-  $GLOBALS['PAGES_TYPES'][Codemacher\TileProxy\Middleware\TileProxyMiddleware::DOKTYPE] = [
+  $GLOBALS['PAGES_TYPES'][Codemacher\TileProxy\Constants::DOKTYPE] = [
       'type' => 'web',
       'allowedTables' => '',
   ];

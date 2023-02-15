@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Codemacher\TileProxy\Controller;
 
 use Psr\Http\Message\ResponseInterface;
@@ -12,7 +14,9 @@ use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\StreamFactory;
 use TYPO3\CMS\Core\Http\JsonResponse;
+
 use Codemacher\TileProxy\LatLngToTile;
+use Codemacher\TileProxy\Constants;
 
 class CachedTileProxyController
 {
@@ -30,7 +34,7 @@ class CachedTileProxyController
     $this->cacheDir = Environment::getVarPath() . '/tileproxy/cache';
 
     $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class);
-    
+
     $this->errorTileUrl = $extConf->get('tile_proxy', 'errorTilePath');
     if (empty($this->errorTileUrl)) {
       $this->errorTileUrl  = ExtensionManagementUtility::extPath('tile_proxy') . "Resources/Public/Images/tile-error.png";
@@ -39,10 +43,9 @@ class CachedTileProxyController
     if (empty($this->emptyTilePath)) {
       $this->emptyTilePath  = ExtensionManagementUtility::extPath('tile_proxy') . "Resources/Public/Images/tile-empty.png";
     }
-
   }
 
-  protected function isInBoundingBox(array $bbox,int $z, int $x, int $y): bool
+  protected function isInBoundingBox(array $bbox, int $z, int $x, int $y): bool
   {
     if (count($bbox) != 4) return true;
     $minTileX     = LatLngToTile::lngToTileX($bbox[0], $z);
@@ -52,13 +55,18 @@ class CachedTileProxyController
     return !(!LatLngToTile::inRange($x, $minTileX, $maxTileX) || !LatLngToTile::inRange($y, $minTileY, $maxTileY));
   }
 
-  protected function createResponse(string $filename,int $cacheHeaderTime): ResponseInterface
+  protected function createResponse(string $filename, int $cacheHeaderTime): ResponseInterface
   {
     $imgData = file_get_contents($filename);
     return (new Response())
       ->withHeader('content-type', 'image/png')
       ->withHeader('cache-control', "public, max-age=$cacheHeaderTime, s-maxage=$cacheHeaderTime")
       ->withBody($this->streamFactory->createStream($imgData));
+  }
+
+  protected function createErrorResponse(int $code): ResponseInterface
+  {
+    return new JsonResponse(['error' => $code], 403);
   }
 
   public function buildUrlByType($provider, $s, $z, $x, $y): string
@@ -78,7 +86,7 @@ class CachedTileProxyController
     $cacheTimeStr =  array_key_exists('cacheTime', $flexSettings) ? $flexSettings['cacheTime'] : '31536000';
     $cacheTime = intval($flexSettings['cacheTime'] ??  $cacheTimeStr);
 
-    
+
     $s = $parms['s'];
     $x = intval($parms['x']);
     $y = intval($parms['y']);
@@ -86,20 +94,20 @@ class CachedTileProxyController
     $provider = $parms['provider'];
 
     if ($s != 'a' && $s != 'b' && $s != 'c') {
-      return new JsonResponse(['error' => 1002], 403);
+      return $this->createErrorResponse(Constants::ERROR_INVALID_SUBDOMAIN);
     }
 
-    if (!in_array($provider,self::VALID_TYPES)) {
-      return new JsonResponse(['error' => 1003], 403);
+    if (!in_array($provider, self::VALID_TYPES)) {
+      return $this->createErrorResponse(Constants::ERROR_INVALID_PROVIDER);
     }
 
     $cacheTileFile = "";
-    if (!$this->isInBoundingBox($bbox,$z, $x, $y)) {
-      return $this->createResponse($this->emptyTilePath,$cacheTime);
+    if (!$this->isInBoundingBox($bbox, $z, $x, $y)) {
+      return $this->createResponse($this->emptyTilePath, $cacheTime);
     } else {
       $fullUrl = $this->buildUrlByType($provider, $s, $z, $x, $y);
-      if(empty($fullUrl)) {
-        return new JsonResponse(['error' => 1004], 403);
+      if (empty($fullUrl)) { // can't be happen
+        return $this->createErrorResponse(Constants::ERROR_INVALID_PROVIDER);
       }
       $cacheTileFile = $this->cacheDir . "/$provider/$z/$x/$y.png";
 
@@ -117,7 +125,7 @@ class CachedTileProxyController
       }
     }
 
-    return $this->createResponse($cacheTileFile,$cacheTime);
+    return $this->createResponse($cacheTileFile, $cacheTime);
   }
 
   private function loadTileAndCacheIt($tileURL, $cacheTileFile)
@@ -130,10 +138,8 @@ class CachedTileProxyController
     $ch = curl_init($tileURL);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    $user_agent = 'CM Tile-Proxy-PHP/1.0';
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
+    curl_setopt($ch, CURLOPT_USERAGENT, Constants::CURL_USER_AGENT);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 

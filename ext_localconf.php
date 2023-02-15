@@ -1,5 +1,5 @@
 <?php
-defined('TYPO3') or die();
+defined('TYPO3') or die('Access denied.');
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
@@ -9,9 +9,9 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
 use Codemacher\TileProxy\Cache\CacheBackend;
-use Codemacher\TileProxy\Middleware\TileProxyMiddleware;
+use Codemacher\TileProxy\Constants;
 
-call_user_func(function ($extKey = 'tile_proxy') {
+(static function ($extKey = 'tile_proxy'): void {
 
   $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class);
 
@@ -38,6 +38,6 @@ call_user_func(function ($extKey = 'tile_proxy') {
 
   // Allow backend users to drag and drop the new page type:
   ExtensionManagementUtility::addUserTSConfig(
-    'options.pageTree.doktypesToShowInNewPageDragArea := addToList(' . TileProxyMiddleware::DOKTYPE . ')'
+    'options.pageTree.doktypesToShowInNewPageDragArea := addToList(' . Constants::DOKTYPE . ')'
   );
-});
+})();

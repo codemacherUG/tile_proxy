@@ -1,9 +1,8 @@
 <?php
-
+declare(strict_types = 1);
 namespace Codemacher\TileProxy;
 
-
-class LatLngToTile 
+class LatLngToTile
 {
   // https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#PHP
   public static function lngToTileX($lng, $zoom)

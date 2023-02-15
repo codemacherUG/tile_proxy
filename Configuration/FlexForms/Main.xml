@@ -1,29 +1,30 @@
 <T3DataStructure>
-  <sheets>
-      <sDEF>
-          <ROOT>
-              <sheetTitle>Sheet Title</sheetTitle>
-              <type>array</type>
-              <el>
-                  <settings.bbox>
-                      <label>LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.bbox</label>
-                      <config>
-                          <type>input</type>
-                          <eval>trim</eval>
-                          <default>11.86,51.41,12.07,51.55</default>
-                      </config>
-                  </settings.bbox>
-                  <settings.cacheTime>
-                    <label>LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.cacheTime</label>
-                    <config>
-                        <type>input</type>
-                        <eval>trim,int</eval>
-                        <default>31536000</default>
-                    </config>
-                </settings.cacheTime>
-                  
-              </el>
-          </ROOT>
-      </sDEF>
-  </sheets>
+    <sheets>
+        <sDEF>
+            <ROOT>
+                <sheetTitle>Sheet Title</sheetTitle>
+                <type>array</type>
+                <el>
+                    <settings.bbox>
+                        <label>
+                            LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.bbox</label>
+                        <config>
+                            <type>input</type>
+                            <eval>trim</eval>
+                            <default>11.86,51.41,12.07,51.55</default>
+                        </config>
+                    </settings.bbox>
+                    <settings.cacheTime>
+                        <label>
+                            LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.cacheTime</label>
+                        <config>
+                            <type>input</type>
+                            <eval>trim,int</eval>
+                            <default>31536000</default>
+                        </config>
+                    </settings.cacheTime>
+                </el>
+            </ROOT>
+        </sDEF>
+    </sheets>
 </T3DataStructure>
