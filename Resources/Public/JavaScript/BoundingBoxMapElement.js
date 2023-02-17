@@ -24,18 +24,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var ol_Map_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ol/Map.js */ "./node_modules/ol/Map.js");
-/* harmony import */ var ol_source_OSM_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ol/source/OSM.js */ "./node_modules/ol/source/OSM.js");
-/* harmony import */ var ol_layer_Tile_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ol/layer/Tile.js */ "./node_modules/ol/layer/Tile.js");
-/* harmony import */ var ol_View_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ol/View.js */ "./node_modules/ol/View.js");
-/* harmony import */ var ol_layer_Vector_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ol/layer/Vector.js */ "./node_modules/ol/layer/Vector.js");
-/* harmony import */ var ol_source_Vector_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ol/source/Vector.js */ "./node_modules/ol/source/Vector.js");
-/* harmony import */ var ol_Feature_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ol/Feature.js */ "./node_modules/ol/Feature.js");
-/* harmony import */ var ol_geom_Polygon_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ol/geom/Polygon.js */ "./node_modules/ol/geom/Polygon.js");
+/* harmony import */ var ol_Map_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ol/Map.js */ "./node_modules/ol/Map.js");
+/* harmony import */ var ol_source_OSM_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ol/source/OSM.js */ "./node_modules/ol/source/OSM.js");
+/* harmony import */ var ol_layer_Tile_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ol/layer/Tile.js */ "./node_modules/ol/layer/Tile.js");
+/* harmony import */ var ol_View_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ol/View.js */ "./node_modules/ol/View.js");
+/* harmony import */ var ol_layer_Vector_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ol/layer/Vector.js */ "./node_modules/ol/layer/Vector.js");
+/* harmony import */ var ol_source_Vector_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ol/source/Vector.js */ "./node_modules/ol/source/Vector.js");
+/* harmony import */ var ol_Feature_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ol/Feature.js */ "./node_modules/ol/Feature.js");
+/* harmony import */ var ol_geom_Polygon_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ol/geom/Polygon.js */ "./node_modules/ol/geom/Polygon.js");
 /* harmony import */ var ol_ext_interaction_Transform__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ol-ext/interaction/Transform */ "./node_modules/ol-ext/interaction/Transform.js");
-/* harmony import */ var ol_events_condition__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ol/events/condition */ "./node_modules/ol/events/condition.js");
+/* harmony import */ var ol_events_condition__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ol/events/condition */ "./node_modules/ol/events/condition.js");
 /* harmony import */ var ol_proj__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js");
-/* harmony import */ var ol_extent__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ol/extent */ "./node_modules/ol/extent.js");
+/* harmony import */ var ol_extent__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ol/extent */ "./node_modules/ol/extent.js");
 
 
 
@@ -60,6 +60,7 @@ var BoundingBoxMap = /** @class */ (function () {
     BoundingBoxMap.prototype.updateBoundingBox = function (boundingBoxStringList) {
         var newCoordinates = this.bboxTextToArray(boundingBoxStringList);
         this.bbox.getGeometry().setCoordinates(newCoordinates);
+        this.fitBBox();
     };
     BoundingBoxMap.prototype.bboxTextToArray = function (value) {
         var stringArray = value.split(",");
@@ -69,28 +70,38 @@ var BoundingBoxMap = /** @class */ (function () {
         var southEast = (0,ol_proj__WEBPACK_IMPORTED_MODULE_1__.fromLonLat)([parseFloat(stringArray[2]), parseFloat(stringArray[1])]);
         return [[southWest, northWest, northEast, southEast]];
     };
+    BoundingBoxMap.prototype.fitBBox = function () {
+        var extent = this.vectorLayer.getSource().getExtent();
+        if (!(0,ol_extent__WEBPACK_IMPORTED_MODULE_2__.isEmpty)(extent)) {
+            this.map.getView().fit(extent, { padding: [50, 50, 50, 50] });
+        }
+        else {
+            this.map.getView().setCenter((0,ol_proj__WEBPACK_IMPORTED_MODULE_1__.fromLonLat)([11.96, 51.23]));
+            this.map.getView().setZoom(8);
+        }
+    };
     BoundingBoxMap.prototype.mount = function (boundingBox) {
         var _this = this;
-        var map = new ol_Map_js__WEBPACK_IMPORTED_MODULE_2__["default"]({
+        this.map = new ol_Map_js__WEBPACK_IMPORTED_MODULE_3__["default"]({
             layers: [
-                new ol_layer_Tile_js__WEBPACK_IMPORTED_MODULE_3__["default"]({
-                    source: new ol_source_OSM_js__WEBPACK_IMPORTED_MODULE_4__["default"](),
+                new ol_layer_Tile_js__WEBPACK_IMPORTED_MODULE_4__["default"]({
+                    source: new ol_source_OSM_js__WEBPACK_IMPORTED_MODULE_5__["default"](),
                 }),
             ],
             target: this.parent.querySelector('.map'),
-            view: new ol_View_js__WEBPACK_IMPORTED_MODULE_5__["default"]({
+            view: new ol_View_js__WEBPACK_IMPORTED_MODULE_6__["default"]({
                 zoom: 10,
             }),
         });
-        var vector = new ol_layer_Vector_js__WEBPACK_IMPORTED_MODULE_6__["default"]({
-            source: new ol_source_Vector_js__WEBPACK_IMPORTED_MODULE_7__["default"]({ wrapX: false }),
+        this.vectorLayer = new ol_layer_Vector_js__WEBPACK_IMPORTED_MODULE_7__["default"]({
+            source: new ol_source_Vector_js__WEBPACK_IMPORTED_MODULE_8__["default"]({ wrapX: false }),
         });
-        map.addLayer(vector);
-        this.bbox = new ol_Feature_js__WEBPACK_IMPORTED_MODULE_8__["default"](new ol_geom_Polygon_js__WEBPACK_IMPORTED_MODULE_9__["default"](boundingBox));
-        vector.getSource().addFeature(this.bbox);
+        this.map.addLayer(this.vectorLayer);
+        this.bbox = new ol_Feature_js__WEBPACK_IMPORTED_MODULE_9__["default"](new ol_geom_Polygon_js__WEBPACK_IMPORTED_MODULE_10__["default"](boundingBox));
+        this.vectorLayer.getSource().addFeature(this.bbox);
         var interaction = new ol_ext_interaction_Transform__WEBPACK_IMPORTED_MODULE_0__["default"]({
             enableRotatedTransform: false,
-            addCondition: ol_events_condition__WEBPACK_IMPORTED_MODULE_10__.shiftKeyOnly,
+            addCondition: ol_events_condition__WEBPACK_IMPORTED_MODULE_11__.shiftKeyOnly,
             hitTolerance: 2,
             translateFeature: true,
             scale: true,
@@ -105,11 +116,8 @@ var BoundingBoxMap = /** @class */ (function () {
                 return [radius, radius];
             }
         });
-        map.addInteraction(interaction);
-        var extent = vector.getSource().getExtent();
-        if (!(0,ol_extent__WEBPACK_IMPORTED_MODULE_11__.isEmpty)(extent)) {
-            map.getView().fit(extent, { padding: [50, 50, 50, 50] });
-        }
+        this.map.addInteraction(interaction);
+        this.fitBBox();
         this.bbox.on('change', function (evt) {
             var coordinates = _this.bbox.getGeometry().getFlatCoordinates();
             var southWest = [Number.MAX_VALUE, Number.MAX_VALUE];
@@ -132,7 +140,6 @@ var BoundingBoxMap = /** @class */ (function () {
                     northEast[1] = coord[1];
             }
             var resutlArray = [southWest[0], southWest[1], northEast[0], northEast[1]];
-            console.log(resutlArray);
             _this.onChangeCallBack(resutlArray.join(','));
         });
     };

@@ -3,6 +3,7 @@ import OSM from 'ol/source/OSM.js';
 import TileLayer from 'ol/layer/Tile.js';
 import View from 'ol/View.js';
 import VectorLayer from 'ol/layer/Vector.js';
+import Geometry from 'ol/geom/Geometry.js';
 import VectorSource from 'ol/source/Vector.js';
 import Feature from 'ol/Feature.js';
 import Polygon from 'ol/geom/Polygon.js';
@@ -15,7 +16,9 @@ import { isEmpty } from 'ol/extent';
 class BoundingBoxMap {
   parent: HTMLElement;
   onChangeCallBack: (newBoundingBoxStringList: string) => void;
+  map: Map;
   bbox: Feature<Polygon>;
+  vectorLayer: VectorLayer<VectorSource<Geometry>>;
 
   constructor(parent: HTMLElement, boundingBoxStringList: string, onChangeCallback: (newBoundingBoxStringList: string) => void) {
     this.parent = parent;
@@ -28,6 +31,7 @@ class BoundingBoxMap {
   public updateBoundingBox(boundingBoxStringList: string): void {
     let newCoordinates = this.bboxTextToArray(boundingBoxStringList);
     this.bbox.getGeometry().setCoordinates(newCoordinates);
+    this.fitBBox();
   }
 
   protected bboxTextToArray(value: string): Coordinate[][] {
@@ -40,8 +44,18 @@ class BoundingBoxMap {
     return [[southWest, northWest, northEast, southEast]];
   }
 
+  protected fitBBox() : void {
+    let extent = this.vectorLayer.getSource().getExtent();
+    if (!isEmpty(extent)) {
+      this.map.getView().fit(extent, { padding: [50, 50, 50, 50] });
+    } else {
+      this.map.getView().setCenter(fromLonLat([11.96, 51.23]));
+      this.map.getView().setZoom(8);
+    }    
+  }
+
   private mount(boundingBox: Coordinate[][]): void {
-    const map = new Map({
+    this.map = new Map({
       layers: [
         new TileLayer({
           source: new OSM(),
@@ -55,12 +69,12 @@ class BoundingBoxMap {
 
 
 
-    const vector = new VectorLayer({
+    this.vectorLayer = new VectorLayer({
       source: new VectorSource({ wrapX: false }),
     })
-    map.addLayer(vector);
+    this.map.addLayer(this.vectorLayer);
     this.bbox = new Feature(new Polygon(boundingBox));
-    vector.getSource().addFeature(this.bbox);
+    this.vectorLayer.getSource().addFeature(this.bbox);
 
     var interaction = new Transform({
       enableRotatedTransform: false,
@@ -79,13 +93,9 @@ class BoundingBoxMap {
         return [radius, radius];
       }
     });
-    map.addInteraction(interaction);
+    this.map.addInteraction(interaction);
 
-
-    let extent = vector.getSource().getExtent();
-    if (!isEmpty(extent)) {
-      map.getView().fit(extent, { padding: [50, 50, 50, 50] });
-    }
+    this.fitBBox();
 
     this.bbox.on('change', (evt) => {
       let coordinates = this.bbox.getGeometry().getFlatCoordinates();
@@ -104,9 +114,6 @@ class BoundingBoxMap {
         if (coord[1] > northEast[1]) northEast[1] = coord[1];
       }
       let resutlArray = [southWest[0], southWest[1], northEast[0], northEast[1]];
-
-      console.log(resutlArray);
-
       this.onChangeCallBack(resutlArray.join(','));
     });
   }

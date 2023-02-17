@@ -18,11 +18,13 @@ Bounding box of permitted tiles
 -------------
 
 Define a maximum range for which the data is to be loaded and made available.
+The bounding box can be determined by the rectangle on the map.
 
-The coordinates for an area of your choice can be retrieved from the following service:
+..  figure:: /Images/EditBoundingBox.png
+    :class: with-shadow
+    :alt: Edit the Bounding Box
 
-https://tools.geofabrik.de/calc/#type=geofabrik_standard&bbox=11.86,51.41,12.07,51.55&tab=1&proj=EPSG:4326&places=2
-
+    Default Backend view (caption of the image)
 
 ..  attention::
 
