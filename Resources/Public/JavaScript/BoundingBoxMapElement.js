@@ -57,6 +57,13 @@ var BoundingBoxMap = /** @class */ (function () {
             _this.mount(_this.bboxTextToArray(boundingBoxStringList));
         })();
     }
+    BoundingBoxMap.prototype.mount = function (boundingBox) {
+        this.buildMap();
+        this.buildFeatureLayers(boundingBox);
+        this.initInteraction();
+        this.registerEvents();
+        this.fitBBox();
+    };
     BoundingBoxMap.prototype.updateBoundingBox = function (boundingBoxStringList) {
         var newCoordinates = this.bboxTextToArray(boundingBoxStringList);
         this.bbox.getGeometry().setCoordinates(newCoordinates);
@@ -80,8 +87,35 @@ var BoundingBoxMap = /** @class */ (function () {
             this.map.getView().setZoom(8);
         }
     };
-    BoundingBoxMap.prototype.mount = function (boundingBox) {
-        var _this = this;
+    BoundingBoxMap.prototype.buildBoundingBoxRectString = function () {
+        var coordinates = this.bbox.getGeometry().getFlatCoordinates();
+        var southWest = [Number.MAX_VALUE, Number.MAX_VALUE];
+        var northEast = [Number.MIN_VALUE, Number.MIN_VALUE];
+        for (var i = 0; i < coordinates.length; i += 2) {
+            if (isNaN(coordinates[i]) || isNaN(coordinates[i + 1])) {
+                return;
+            }
+            ;
+            var coord = (0,ol_proj__WEBPACK_IMPORTED_MODULE_1__.toLonLat)([coordinates[i], coordinates[i + 1]]);
+            coord[0] = Math.round(coord[0] * 100) / 100;
+            coord[1] = Math.round(coord[1] * 100) / 100;
+            if (coord[0] < southWest[0])
+                southWest[0] = coord[0];
+            if (coord[1] < southWest[1])
+                southWest[1] = coord[1];
+            if (coord[0] > northEast[0])
+                northEast[0] = coord[0];
+            if (coord[1] > northEast[1])
+                northEast[1] = coord[1];
+        }
+        var resutlArray = [southWest[0], southWest[1], northEast[0], northEast[1]];
+        return resutlArray.join(',');
+    };
+    BoundingBoxMap.prototype.updateBBoxRounded = function () {
+        var coordinates = this.bbox.getGeometry().getFlatCoordinates();
+        console.log(coordinates);
+    };
+    BoundingBoxMap.prototype.buildMap = function () {
         this.map = new ol_Map_js__WEBPACK_IMPORTED_MODULE_3__["default"]({
             layers: [
                 new ol_layer_Tile_js__WEBPACK_IMPORTED_MODULE_4__["default"]({
@@ -93,12 +127,22 @@ var BoundingBoxMap = /** @class */ (function () {
                 zoom: 10,
             }),
         });
+    };
+    BoundingBoxMap.prototype.buildFeatureLayers = function (boundingBox) {
         this.vectorLayer = new ol_layer_Vector_js__WEBPACK_IMPORTED_MODULE_7__["default"]({
             source: new ol_source_Vector_js__WEBPACK_IMPORTED_MODULE_8__["default"]({ wrapX: false }),
         });
         this.map.addLayer(this.vectorLayer);
         this.bbox = new ol_Feature_js__WEBPACK_IMPORTED_MODULE_9__["default"](new ol_geom_Polygon_js__WEBPACK_IMPORTED_MODULE_10__["default"](boundingBox));
         this.vectorLayer.getSource().addFeature(this.bbox);
+        var staticVectorLayer = new ol_layer_Vector_js__WEBPACK_IMPORTED_MODULE_7__["default"]({
+            source: new ol_source_Vector_js__WEBPACK_IMPORTED_MODULE_8__["default"]({ wrapX: false }),
+        });
+        this.map.addLayer(staticVectorLayer);
+        this.bboxRounded = new ol_Feature_js__WEBPACK_IMPORTED_MODULE_9__["default"](new ol_geom_Polygon_js__WEBPACK_IMPORTED_MODULE_10__["default"](boundingBox));
+        staticVectorLayer.getSource().addFeature(this.bboxRounded);
+    };
+    BoundingBoxMap.prototype.initInteraction = function () {
         var interaction = new ol_ext_interaction_Transform__WEBPACK_IMPORTED_MODULE_0__["default"]({
             enableRotatedTransform: false,
             addCondition: ol_events_condition__WEBPACK_IMPORTED_MODULE_11__.shiftKeyOnly,
@@ -110,6 +154,7 @@ var BoundingBoxMap = /** @class */ (function () {
             keepRectangle: false,
             translate: true,
             stretch: true,
+            layers: [this.vectorLayer],
             // Get scale on points
             pointRadius: function (f) {
                 var radius = f.get('radius') || 10;
@@ -117,30 +162,12 @@ var BoundingBoxMap = /** @class */ (function () {
             }
         });
         this.map.addInteraction(interaction);
-        this.fitBBox();
+    };
+    BoundingBoxMap.prototype.registerEvents = function () {
+        var _this = this;
         this.bbox.on('change', function (evt) {
-            var coordinates = _this.bbox.getGeometry().getFlatCoordinates();
-            var southWest = [Number.MAX_VALUE, Number.MAX_VALUE];
-            var northEast = [Number.MIN_VALUE, Number.MIN_VALUE];
-            for (var i = 0; i < coordinates.length; i += 2) {
-                if (isNaN(coordinates[i]) || isNaN(coordinates[i + 1])) {
-                    return;
-                }
-                ;
-                var coord = (0,ol_proj__WEBPACK_IMPORTED_MODULE_1__.toLonLat)([coordinates[i], coordinates[i + 1]]);
-                coord[0] = Math.round(coord[0] * 100) / 100;
-                coord[1] = Math.round(coord[1] * 100) / 100;
-                if (coord[0] < southWest[0])
-                    southWest[0] = coord[0];
-                if (coord[1] < southWest[1])
-                    southWest[1] = coord[1];
-                if (coord[0] > northEast[0])
-                    northEast[0] = coord[0];
-                if (coord[1] > northEast[1])
-                    northEast[1] = coord[1];
-            }
-            var resutlArray = [southWest[0], southWest[1], northEast[0], northEast[1]];
-            _this.onChangeCallBack(resutlArray.join(','));
+            _this.updateBBoxRounded();
+            _this.onChangeCallBack(_this.buildBoundingBoxRectString());
         });
     };
     return BoundingBoxMap;
