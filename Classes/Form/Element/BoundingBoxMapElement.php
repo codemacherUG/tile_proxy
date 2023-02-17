@@ -7,6 +7,8 @@ namespace Codemacher\TileProxy\Form\Element;
 use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
+use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
+use TYPO3\CMS\Core\Information\Typo3Version;
 
 class BoundingBoxMapElement extends AbstractFormElement
 {
@@ -51,9 +53,17 @@ class BoundingBoxMapElement extends AbstractFormElement
         $html[] =   '</div>';
         $html[] = '</div>';
         $resultArray['html'] = implode(LF, $html);
-        $resultArray['requireJsModules'] = array(
-            'TYPO3/CMS/TileProxy/BoundingBoxMapElement'
-        );
+
+        $typo3Version = new Typo3Version();
+        if ($typo3Version->getMajorVersion() < 12) {
+            $resultArray['requireJsModules'][] = JavaScriptModuleInstruction::forRequireJS(
+                'TYPO3/CMS/TileProxy/BoundingBoxMapElement'
+            )->instance($fieldId);
+        } else {
+            $resultArray['javaScriptModules'][] =
+                JavaScriptModuleInstruction::create('@codemacher/tile_proxy/BoundingBoxMapElement.js');
+        }
+
         $resultArray['stylesheetFiles'][] = 'EXT:tile_proxy/Resources/Public/Css/BoundingBoxMapElement.css';
         return $resultArray;
     }

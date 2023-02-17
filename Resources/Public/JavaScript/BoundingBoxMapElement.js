@@ -44990,6 +44990,7 @@ var BoundingBoxMapElement = /** @class */ (function () {
             });
             selectElement.addEventListener('change', function (event) {
                 var inputTarget = event.target;
+                inputTarget.classList.add('has-change');
                 map.updateBoundingBox(inputTarget.value);
             });
         };

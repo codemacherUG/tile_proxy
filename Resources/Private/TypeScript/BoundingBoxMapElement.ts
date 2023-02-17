@@ -14,14 +14,11 @@ class BoundingBoxMapElement {
 
       selectElement.addEventListener('change', (event) => {
         let inputTarget = event.target as HTMLInputElement;
+        inputTarget.classList.add('has-change');
         map.updateBoundingBox(inputTarget.value);
       });
-      
     }
-    
   }
-
-
 }
 
 new BoundingBoxMapElement();
