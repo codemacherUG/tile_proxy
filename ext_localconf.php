@@ -40,4 +40,11 @@ use Codemacher\TileProxy\Constants;
   ExtensionManagementUtility::addUserTSConfig(
     'options.pageTree.doktypesToShowInNewPageDragArea := addToList(' . Constants::DOKTYPE . ')'
   );
+
+
+  $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1676502776] = [
+    'nodeName' => 'boundingboxmap',
+    'priority' => 40,
+    'class' => \Codemacher\TileProxy\Form\Element\BoundingBoxMapElement::class,
+];
 })();

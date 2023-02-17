@@ -9,8 +9,9 @@
                         <label>
                             LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.bbox</label>
                         <config>
-                            <type>input</type>
-                            <eval>trim</eval>
+                            <type>user</type>
+                            <renderType>boundingboxmap</renderType>
+                            <eval>trim,required</eval>
                             <default>11.86,51.41,12.07,51.55</default>
                         </config>
                     </settings.bbox>
