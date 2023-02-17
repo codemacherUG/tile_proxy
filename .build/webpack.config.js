@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
 var colors = require('colors');
 
@@ -14,28 +15,13 @@ let entry = {
 
   devtool: false,
   plugins: [
-    new webpack.ProgressPlugin({
-      activeModules: false,
-      entries: true,
-      handler(percentage, message, ...args) {
-        if (percentage == 1) {
-          console.log(colors.cyan.underline("finished at " + new Date()));
-        }
-      },
-      modules: true,
-      modulesCount: 5000,
-      profile: false,
-      dependencies: true,
-      dependenciesCount: 10000,
-      percentBy: null
-    }),
     new MiniCssExtractPlugin({
       filename: "../Css/[name].css", // change this RELATIVE to your output.path!
       chunkFilename: "[id].css",
     }),
     new webpack.SourceMapDevToolPlugin({
       filename: '[file].map[query]'
-    })
+    }),
   ],
   stats: {
     colors: true,
@@ -140,12 +126,13 @@ let entry = {
     ]
   },
   optimization: {
+    minimize: true,
     minimizer: [
-      // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
-      // `...`,
       new CssMinimizerPlugin(),
+      new TerserPlugin()
     ],
   },
+
 };
 
 let modules = { ...entry };
@@ -153,8 +140,9 @@ let modules = { ...entry };
 module.exports = function (env, args) {
   modules.entry = {
     BoundingBoxMapElement: [path.resolve(__dirname, '../Resources/Private/TypeScript/BoundingBoxMapElement.ts'), path.resolve(__dirname, '../Resources/Private/Scss/BoundingBoxMap.scss')],
+    MapCreator: [path.resolve(__dirname, '../Resources/Private/TypeScript/MapCreator.ts'), path.resolve(__dirname, '../Resources/Private/Scss/MapCreator.scss')],
   };
-  modules.output.path = path.resolve(__dirname, '../Resources/Public/JavaScript/');
+  modules.output.path = path.resolve(__dirname, '../Resources/Public/JavaScript');
   modules.externals = {};
   return [modules];
 };

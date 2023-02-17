@@ -1,0 +1,8 @@
+page {
+  includeCSS {
+   tileproxymapcreator = EXT:tile_proxy/Resources/Public/Css/MapCreator.css
+  }
+  includeJSFooter {
+    tileproxymapcreator = EXT:tile_proxy/Resources/Public/JavaScript/MapCreator.js
+  }
+}
