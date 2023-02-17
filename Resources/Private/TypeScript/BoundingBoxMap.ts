@@ -12,6 +12,7 @@ import { shiftKeyOnly } from 'ol/events/condition';
 import { Coordinate } from 'ol/coordinate';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { isEmpty } from 'ol/extent';
+import { Fill, Stroke, Style} from 'ol/style.js';
 
 class BoundingBoxMap {
   parent: HTMLElement;
@@ -63,6 +64,10 @@ class BoundingBoxMap {
     }
   }
 
+  private roundCoordValue(coord: Coordinate) : Coordinate {
+    return [Math.round((coord[0]) * 100) / 100, Math.round((coord[1]) * 100) / 100];
+  }
+
   private buildBoundingBoxRectString(): string {
     let coordinates = this.bbox.getGeometry().getFlatCoordinates();
     let southWest = [Number.MAX_VALUE, Number.MAX_VALUE];
@@ -71,9 +76,7 @@ class BoundingBoxMap {
       if (isNaN(coordinates[i]) || isNaN(coordinates[i + 1])) {
         return;
       };
-      let coord = toLonLat([coordinates[i], coordinates[i + 1]]);
-      coord[0] = Math.round(coord[0] * 100) / 100;
-      coord[1] = Math.round(coord[1] * 100) / 100;
+      let coord = this.roundCoordValue(toLonLat([coordinates[i], coordinates[i + 1]]));
       if (coord[0] < southWest[0]) southWest[0] = coord[0];
       if (coord[1] < southWest[1]) southWest[1] = coord[1];
       if (coord[0] > northEast[0]) northEast[0] = coord[0];
@@ -85,7 +88,16 @@ class BoundingBoxMap {
 
   private updateBBoxRounded(): void {
     let coordinates = this.bbox.getGeometry().getFlatCoordinates();
-    console.log(coordinates);
+    let roundedArray : Coordinate[][] = [];
+    roundedArray.push([]);
+    for (let i = 0; i < coordinates.length; i += 2) {
+      if (isNaN(coordinates[i]) || isNaN(coordinates[i + 1])) {
+        return;
+      };
+      let coord = this.roundCoordValue(toLonLat([coordinates[i], coordinates[i + 1]]));
+      roundedArray[0].push(fromLonLat(coord));
+    }
+    this.bboxRounded.getGeometry().setCoordinates(roundedArray);
   }
 
   private buildMap(): void {
@@ -111,8 +123,21 @@ class BoundingBoxMap {
 
     this.vectorLayer.getSource().addFeature(this.bbox);
 
+    const styles = [
+      new Style({
+        stroke: new Stroke({
+          color: 'green',
+          width: 3,
+        }),
+        fill: new Fill({
+          color: 'rgba(255, 255, 255, 0.01)',
+        }),
+      }),
+    ];
+
     let staticVectorLayer = new VectorLayer({
       source: new VectorSource({ wrapX: false }),
+      style: styles,
     })
     this.map.addLayer(staticVectorLayer);
     this.bboxRounded = new Feature(new Polygon(boundingBox));
@@ -148,9 +173,6 @@ class BoundingBoxMap {
       this.onChangeCallBack(this.buildBoundingBoxRectString());
     });
   }
-
-
-
 }
 
 export default BoundingBoxMap;

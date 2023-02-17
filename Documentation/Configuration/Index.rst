@@ -14,17 +14,16 @@ That page defines the endpoint from which the data can be retrieved.
 
 In the settings of the endpoint page you should make the following settings:
 
+..  figure:: /Images/Settings.png
+    :class: with-shadow
+    :alt: Edit the Bounding Box
+
 Bounding box of permitted tiles
 -------------
 
 Define a maximum range for which the data is to be loaded and made available.
 The bounding box can be determined by the rectangle on the map.
-
-..  figure:: /Images/EditBoundingBox.png
-    :class: with-shadow
-    :alt: Edit the Bounding Box
-
-    Default Backend view (caption of the image)
+The bounding box rectangle (green) may differ from the moving rectangle because the values are rounded.
 
 ..  attention::
 
