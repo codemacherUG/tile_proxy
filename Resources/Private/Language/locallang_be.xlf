@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<xliff version="1.0">
+  <file source-language="en" datatype="plaintext" original="messages" date="2023-02-17T19:58:00Z" product-name="tile_proxy">
+    <header />
+    <body>
+			<trans-unit id="content_element.map">
+				<source>OSM Map</source>
+			</trans-unit>
+			<trans-unit id="content_element.map.description">
+				<source>Output a OpenStreetMap</source>
+			</trans-unit>
+    </body>
+  </file>
+</xliff>

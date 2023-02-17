@@ -8,6 +8,8 @@ use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
+use Codemacher\TileProxy\Domain\Model\Plugin;
+use Codemacher\TileProxy\Utils\PluginRegisterFacade;
 use Codemacher\TileProxy\Cache\CacheBackend;
 use Codemacher\TileProxy\Constants;
 
@@ -41,10 +43,21 @@ use Codemacher\TileProxy\Constants;
     'options.pageTree.doktypesToShowInNewPageDragArea := addToList(' . Constants::DOKTYPE . ')'
   );
 
-
   $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1676502776] = [
     'nodeName' => 'boundingboxmap',
     'priority' => 40,
     'class' => \Codemacher\TileProxy\Form\Element\BoundingBoxMapElement::class,
-];
+  ];
+
+
+  PluginRegisterFacade::definePlugin(new Plugin(
+    'TileProxy',
+    'Map',
+  ))
+  ->setIconFileName("map.svg")
+    ->addShowItemConfig([
+      '--palette--;;headers',
+    ]);
+
+  PluginRegisterFacade::configureAllPlugins();
 })();

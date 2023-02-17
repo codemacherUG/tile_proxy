@@ -1,7 +1,7 @@
 
 <?php
 $EM_CONF[$_EXTKEY] = [
-	'title' => 'TileProxy',
+	'title' => 'Tile Proxy',
 	'description' => 'With Tile Proxy you can integrate OpenStreetMap maps GDPR in a compliant way without any third party requests from the client. For a given area, the data is loaded from OpenStreetMap and cached, therefore you do not need a cookie banner or blocker to use OpenStreetMap	cookie banner or blocker to use OpenStreetMap.',
 	'author' => 'Thomas Rokohl (codemacher)',
 	'author_email' => 'webmaster@codemacher.de',
