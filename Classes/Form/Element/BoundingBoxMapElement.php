@@ -58,7 +58,7 @@ class BoundingBoxMapElement extends AbstractFormElement
         if ($typo3Version->getMajorVersion() < 12) {
             $resultArray['requireJsModules'][] = JavaScriptModuleInstruction::forRequireJS(
                 'TYPO3/CMS/TileProxy/BoundingBoxMapElement'
-            )->instance($fieldId);
+            );
         } else {
             $resultArray['javaScriptModules'][] =
                 JavaScriptModuleInstruction::create('@codemacher/tile_proxy/BoundingBoxMapElement.js');
