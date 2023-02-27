@@ -48,6 +48,13 @@ Pass tile outside of the bounding box
 If this option is set, all tiles outside the bounding box are passed through directly.
 If this option is switched off, no queries outside the bounding box will be forwarded.
 
+Cache all tiles if the zoom is less than (ignore bounding box)
+~~~~~~~~~~
+
+All tiles with a zoom level >= this will cached.
+A zoom level 6 requires about 20MB, but beware, the required size increases exponentially.
+
+
 Caching Time (in s) for each tile
 ~~~~~~~~~~
 
