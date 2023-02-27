@@ -6,11 +6,15 @@
 Configuration
 =============
 
-Create a page with the type (doktype) "Tile Proxy Endpoint".
+Create a page with the type (doktype) "Tile Proxy Endpoint" for a tile proxy or "Nominatim Proxy Endpoint" for a geocoding proxy.
 The easiest way is to drag a new page of this type from the toolbar and place it in a system folder.
 
 Give the page a name and a slug.
 That page defines the endpoint from which the data can be retrieved.
+
+
+Tile Proxy Endpoint
+----------
 
 In the settings of the endpoint page you should make the following settings:
 
@@ -19,7 +23,7 @@ In the settings of the endpoint page you should make the following settings:
     :alt: Edit the Bounding Box
 
 Bounding box of permitted tiles
--------------
+~~~~~~~~~~
 
 Define a maximum range for which the data is to be loaded and made available.
 The bounding box can be determined by the rectangle on the map.
@@ -39,8 +43,20 @@ The bounding box rectangle (green) may differ from the moving rectangle because 
     With Leaflet, for example, it can happen that an area larger the maxBounds is still displayed.
 
 Caching Time (in s) for each tile
--------------
+~~~~~~~~~~
 
 Each tile is stored as an image on your server.
 This time indicates on the one hand how long this image is not updated again by a request to OpenStreetMap,
 on the other hand this time is sent as caching time to the client for each tile.
+
+
+Nominatim Proxy Endpoint
+----------
+
+In the settings of the endpoint page you should make the following settings:
+
+Caching Time (in s) for each request
+~~~~~~~~~~
+
+Each request to nominatim is stored in the database.
+This time in seconds determines how long the entry is valid and remains stored.

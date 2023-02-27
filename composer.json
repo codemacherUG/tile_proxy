@@ -25,7 +25,9 @@
     "DSGVO",
     "GDPR",
     "Tile",
-    "Proxy"
+    "Proxy",
+    "Geocoding",
+    "Nominatim"
   ],
   "autoload": {
     "psr-4": {

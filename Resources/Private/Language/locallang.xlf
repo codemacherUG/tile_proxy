@@ -4,10 +4,13 @@
 		product-name="tile_proxy">
 		<header />
 		<body>
-			<trans-unit id="api_dok_type" resname="api_dok_type">
+			<trans-unit id="doktype_tile_proxy">
 				<source>Tile Proxy Endpoint</source>
 			</trans-unit>
-			<trans-unit id="tx_tileproxy_flexform" resname="tx_tileproxy_flexform">
+			<trans-unit id="doktype_nominatim_proxy">
+				<source>Nominatim Proxy Endpoint</source>
+			</trans-unit>
+			<trans-unit id="tx_tileproxy_flexform">
 				<source>Tile Proxy Settings</source>
 			</trans-unit>
 			<trans-unit id="tx_tileproxy_flexform.settings.bbox">
@@ -16,6 +19,10 @@
 			<trans-unit id="tx_tileproxy_flexform.settings.cacheTime">
 				<source>Caching Time (in s) for each tile</source>
 			</trans-unit>
+			<trans-unit id="tx_tileproxy_flexform.settings.requestCacheTime">
+				<source>Caching Time (in s) for each request</source>
+			</trans-unit>
+			
 		</body>
 	</file>
 </xliff>
