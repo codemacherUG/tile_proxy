@@ -15,6 +15,7 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
 use Codemacher\TileProxy\LatLngToTile;
 use Codemacher\TileProxy\Constants;
+use Codemacher\TileProxy\Utils\FolderUtil;
 
 class TileProxyController extends ProxyController
 {
@@ -87,16 +88,6 @@ class TileProxyController extends ProxyController
     return null;
   }
 
-  function folderSize($dir)
-  {
-    $size = 0;
-
-    foreach (glob(rtrim($dir, '/') . '/*', GLOB_NOSORT) as $each) {
-      $size += is_file($each) ? filesize($each) : $this->folderSize($each);
-    }
-
-    return $size;
-  }
 
   public function process(array $flexSettings, ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
   {
@@ -149,14 +140,14 @@ class TileProxyController extends ProxyController
 
       $isChachValid = true;
       if (!file_exists($cacheTileFile)) {
-        if ($this->folderSize($this->cacheDir) > $this->maxTileFileCacheSize) {
+        if (FolderUtil::calcSize($this->cacheDir) > $this->maxTileFileCacheSize) {
           return $this->passThrough($fullUrl, $cacheTime);
         }
         $isChachValid = $this->loadTileAndCacheIt($fullUrl, $cacheTileFile);
       } else {
         $fileAge = time() - filemtime($cacheTileFile);
         if ($fileAge > $cacheTime) {
-          if ($this->folderSize($this->cacheDir) > $this->maxTileFileCacheSize) {
+          if (FolderUtil::calcSize($this->cacheDir) > $this->maxTileFileCacheSize) {
             return $this->passThrough($fullUrl, $cacheTime);
           }
           $isChachValid = $this->loadTileAndCacheIt($fullUrl, $cacheTileFile);
