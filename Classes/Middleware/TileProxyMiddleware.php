@@ -48,7 +48,7 @@ class TileProxyMiddleware implements MiddlewareInterface
 
     protected function performProxy(string $classname, ServerRequestInterface $request, RequestHandlerInterface $handler, array $pageRecord): ResponseInterface
     {
-      //  if (!$this->fulfilsHostRestrictions()) return new JsonResponse(['error' => Constants::ERROR_INVALID_HOST], 403);
+        if (!$this->fulfilsHostRestrictions()) return new JsonResponse(['error' => Constants::ERROR_INVALID_HOST], 403);
         
         $flexform = array_key_exists('tx_tileproxy_flexform', $pageRecord) ? $pageRecord['tx_tileproxy_flexform'] : "";
         $ffs = GeneralUtility::makeInstance(FlexFormService::class);
