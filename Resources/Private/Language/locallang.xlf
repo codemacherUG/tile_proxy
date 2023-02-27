@@ -16,7 +16,7 @@
 			<trans-unit id="tx_tileproxy_flexform.settings.bbox">
 				<source>Bounding box of permitted tiles, Default: '11.86,51.41,12.07,51.55' (Keep it small. The larger the area, the more storage space is required.</source>
 			</trans-unit>
-			<trans-unit id="tx_tileproxy_flexform.settings.cacheByMaxZoom">
+			<trans-unit id="tx_tileproxy_flexform.settings.cachingUntilZoom">
 				<source>Cache all tiles if the zoom is less or equal than (ignore bounding box)</source>
 			</trans-unit>
 		

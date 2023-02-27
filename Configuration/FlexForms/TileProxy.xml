@@ -15,15 +15,15 @@
                             <default>11.86,51.41,12.07,51.55</default>
                         </config>
                     </settings.bbox>
-                    <settings.cacheByMaxZoom>
+                    <settings.cachingUntilZoom>
                         <label>
-                            LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.cacheByMaxZoom</label>
+                            LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.cachingUntilZoom</label>
                         <config>
                             <type>input</type>
                             <eval>trim,int</eval>
                             <default>6</default>
                         </config>
-                    </settings.cacheByMaxZoom>                    
+                    </settings.cachingUntilZoom>                    
                     <settings.passthrough>
                         <label>
                             LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.passthrough</label>
