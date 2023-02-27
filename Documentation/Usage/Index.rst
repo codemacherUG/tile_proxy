@@ -90,7 +90,7 @@ If the slug for your page is e.g. geo-proxy, the data can be retrieved from:
 
 ..  code-block:: javascript
 
-    /geo-proxy/?provider=osm&q=06120&format=json&addressdetails=1
+    /geo-proxy/?provider=osm&apitype=search&q=06120&format=json&addressdetails=1
 
 Arguments
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -99,7 +99,14 @@ Arguments
 
 Currently only osm (OpenStreetMap) is supported, so the value must be osm.
 
-** all other paramers **
+**apitype**
+
+Type of the api endpoint.
+Permissible types are: 'search','reverse','lookup'
+see https://nominatim.org/release-docs/latest/api/Overview/
+
+
+**all other paramers**
 
 all other parameters are forwarded directly to the nominatim-api.
 

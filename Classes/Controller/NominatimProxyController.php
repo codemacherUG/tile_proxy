@@ -18,6 +18,7 @@ use Codemacher\TileProxy\Cache\RequestCache;
 class NominatimProxyController extends ProxyController
 {
 
+  const VALID_APITYPES = ['search','reverse','lookup'];
   protected int $maxDbRecordsToCache;
   protected RequestCache $requestCache;
   public function __construct()
@@ -40,12 +41,12 @@ class NominatimProxyController extends ProxyController
       ->withBody($this->streamFactory->createStream($contentInfo['data']));
   }
 
-  public function buildUrlByType(string $provider, array $parms): string
+  public function buildUrlByType(string $provider, string $apitype, array $parms): string
   {
     $url = "";
     switch ($provider) {
       case "osm":
-        $url = "https://nominatim.openstreetmap.org/search";
+        $url = "https://nominatim.openstreetmap.org/$apitype";
         break;
       default:
         return null;
@@ -55,8 +56,19 @@ class NominatimProxyController extends ProxyController
     return $url . "?" . $getParameters;
   }
 
+  protected function parametersComplet(ServerRequestInterface $request): bool
+  {
+    $params = $request->getQueryParams();
+    return isset($params['provider'], $params['apitype']);
+  }
+
   public function process(array $flexSettings, ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
   {
+    
+    if (!$this->parametersComplet($request)) {
+      return $this->createErrorResponse(Constants::ERROR_INVALID_PARAMETERS);
+    }
+
     $parms = $request->getQueryParams();
 
     $cacheTimeStr =  array_key_exists('cacheTime', $flexSettings) ? $flexSettings['cacheTime'] : '1209600';
@@ -66,9 +78,16 @@ class NominatimProxyController extends ProxyController
     if (!in_array($provider, self::VALID_TYPES)) {
       return $this->createErrorResponse(Constants::ERROR_INVALID_PROVIDER);
     }
+
+    $apitype = $parms['apitype'];
+
+    if (!in_array($apitype, self::VALID_APITYPES)) {
+      return $this->createErrorResponse(Constants::ERROR_INVALID_APITYPE);
+    }
+
     $this->requestCache->cleanUp($cacheTime);
     unset($parms['provider']);
-    $fullUrl = $this->buildUrlByType($provider, $parms);
+    $fullUrl = $this->buildUrlByType($provider, $apitype, $parms);
 
     $cachedData = $this->requestCache->getData($fullUrl);
     if ($this->requestCache->getData($fullUrl)) {

@@ -16,6 +16,7 @@ abstract class ProxyController
 
   protected StreamFactory $streamFactory;
   const VALID_TYPES = ["osm"];
+  
 
   public function __construct()
   {

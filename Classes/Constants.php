@@ -11,6 +11,7 @@ class Constants {
     CONST ERROR_INVALID_SUBDOMAIN = 1002;
     const ERROR_INVALID_PROVIDER = 1004;
     const ERROR_INVALID_ANSWER = 1005;
+    const ERROR_INVALID_APITYPE = 1006;
 
     const CURL_USER_AGENT = 'Tile-Proxy-PHP/1.1';
 }
