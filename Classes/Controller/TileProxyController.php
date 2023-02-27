@@ -105,8 +105,8 @@ class TileProxyController extends ProxyController
     $passthroughStr =  array_key_exists('passthrough', $flexSettings) ? $flexSettings['passthrough'] : 0;
     $passthrough = intval($flexSettings['passthrough'] ??  $passthroughStr);
 
-    $cacheByMaxZoomStr =  array_key_exists('cacheByMaxZoom', $flexSettings) ? $flexSettings['cacheByMaxZoom'] : 6;
-    $cacheByMaxZoom = intval($flexSettings['cacheByMaxZoom'] ??  $cacheByMaxZoomStr);
+    $cachingUntilZoomStr =  array_key_exists('cachingUntilZoom', $flexSettings) ? $flexSettings['cachingUntilZoom'] : 6;
+    $cachingUntilZoom = intval($flexSettings['cachingUntilZoom'] ??  $cachingUntilZoomStr);
 
 
     $s = $parms['s'];
@@ -129,7 +129,7 @@ class TileProxyController extends ProxyController
     }
 
     $cacheTileFile = "";
-    if ($z > $cacheByMaxZoom && !$this->isInBoundingBox($bbox, $z, $x, $y)) {
+    if ($z > $cachingUntilZoom && !$this->isInBoundingBox($bbox, $z, $x, $y)) {
       if ($passthrough > 0) {
         return $this->passThrough($fullUrl, $cacheTime);
       }
