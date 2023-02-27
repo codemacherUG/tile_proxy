@@ -23,7 +23,7 @@
                             <eval>trim,int</eval>
                             <default>6</default>
                         </config>
-                    </settings.cachingUntilZoom>                    
+                    </settings.cachingUntilZoom>
                     <settings.passthrough>
                         <label>
                             LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.passthrough</label>
@@ -31,12 +31,13 @@
                             <type>check</type>
                             <items type="array">
                                 <numIndex index="0" type="array">
-                                    <numIndex index="0">LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.yes</numIndex>
+                                    <numIndex index="0">
+                                        LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.yes</numIndex>
                                     <numIndex index="1"></numIndex>
                                 </numIndex>
                             </items>
                         </config>
-                    </settings.passthrough>                    
+                    </settings.passthrough>
                     <settings.cacheTime>
                         <label>
                             LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.cacheTime</label>

@@ -161,12 +161,10 @@ class TileProxyController extends ProxyController
     return $this->createResponseByFilename($cacheTileFile, $cacheTime);
   }
 
-
   private function passThrough($fullUrl, $cacheTileFile): ResponseInterface
   {
     return $this->createResponse($this->loadTile($fullUrl), $cacheTileFile);
   }
-
 
   private function loadTile($tileURL): string
   {

@@ -19,11 +19,9 @@
 			<trans-unit id="tx_tileproxy_flexform.settings.cachingUntilZoom">
 				<source>Cache all tiles if the zoom is less or equal than (ignore bounding box)</source>
 			</trans-unit>
-		
 			<trans-unit id="tx_tileproxy_flexform.settings.passthrough">
 				<source>Pass tile outside of the bounding box</source>
 			</trans-unit>
-
 			<trans-unit id="tx_tileproxy_flexform.settings.cacheTime">
 				<source>Caching Time (in s) for each tile</source>
 			</trans-unit>
@@ -33,7 +31,6 @@
 			<trans-unit id="tx_tileproxy_flexform.settings.yes">
 				<source>Yes</source>
 			</trans-unit>
-			
 		</body>
 	</file>
 </xliff>
