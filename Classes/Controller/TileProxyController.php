@@ -18,19 +18,15 @@ use TYPO3\CMS\Core\Http\JsonResponse;
 use Codemacher\TileProxy\LatLngToTile;
 use Codemacher\TileProxy\Constants;
 
-class CachedTileProxyController
+class TileProxyController extends ProxyController
 {
-  private StreamFactory $streamFactory;
   private string $errorTileUrl;
   private string $emptyTilePath;
   private string $cacheDir;
 
-  const VALID_TYPES = ["osm"];
-
   public function __construct()
   {
-    $this->streamFactory = GeneralUtility::makeInstance(StreamFactory::class);
-
+    parent::__construct();
     $this->cacheDir = Environment::getVarPath() . '/tileproxy/cache';
 
     $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class);
@@ -55,6 +51,13 @@ class CachedTileProxyController
     return !(!LatLngToTile::inRange($x, $minTileX, $maxTileX) || !LatLngToTile::inRange($y, $minTileY, $maxTileY));
   }
 
+
+  protected function parametersComplet(ServerRequestInterface $request): bool
+  {
+    $params = $request->getQueryParams();
+    return isset($params['provider'], $params['s'], $params['x'], $params['y'], $params['z']);
+  }
+
   protected function createResponse(string $filename, int $cacheHeaderTime): ResponseInterface
   {
     $imgData = file_get_contents($filename);
@@ -62,11 +65,6 @@ class CachedTileProxyController
       ->withHeader('content-type', 'image/png')
       ->withHeader('cache-control', "public, max-age=$cacheHeaderTime, s-maxage=$cacheHeaderTime")
       ->withBody($this->streamFactory->createStream($imgData));
-  }
-
-  protected function createErrorResponse(int $code): ResponseInterface
-  {
-    return new JsonResponse(['error' => $code], 403);
   }
 
   public function buildUrlByType($provider, $s, $z, $x, $y): string
@@ -80,6 +78,11 @@ class CachedTileProxyController
 
   public function process(array $flexSettings, ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
   {
+
+    if (!$this->parametersComplet($request)) {
+      return new JsonResponse(['error' => Constants::ERROR_INVALID_PARAMETERS], 403);
+    }
+
     $parms = $request->getQueryParams();
     $bboxStr = array_key_exists('bbox', $flexSettings) ? $flexSettings['bbox'] : '11.86,51.41,12.07,51.55';
     $bbox = explode(',', $bboxStr);

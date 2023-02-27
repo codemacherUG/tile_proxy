@@ -1,6 +1,9 @@
 # cat=basic; type=string; label=Delete all cached tiles if the cache is cleared
 deleteTileOnCacheCleanUp = 0
 
+# cat=basic; type=string; label=Delete all nominatim request caches if the cache is cleared
+deleteNominatimCacheOnCacheCleanUp = 0
+
 # cat=basic; type=string; label=Path to error tile png (absolute)
 errorTilePath = 
 
