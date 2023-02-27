@@ -16,11 +16,17 @@
 			<trans-unit id="tx_tileproxy_flexform.settings.bbox">
 				<source>Bounding Box of permitted Tiles, Default: '11.86,51.41,12.07,51.55' (Keep it small. The larger the area, the more storage space is required.</source>
 			</trans-unit>
+			<trans-unit id="tx_tileproxy_flexform.settings.passthrough">
+				<source>Pass tile outside of the bounding box</source>
+			</trans-unit>
 			<trans-unit id="tx_tileproxy_flexform.settings.cacheTime">
 				<source>Caching Time (in s) for each tile</source>
 			</trans-unit>
 			<trans-unit id="tx_tileproxy_flexform.settings.requestCacheTime">
 				<source>Caching Time (in s) for each request</source>
+			</trans-unit>
+			<trans-unit id="tx_tileproxy_flexform.settings.yes">
+				<source>Yes</source>
 			</trans-unit>
 			
 		</body>

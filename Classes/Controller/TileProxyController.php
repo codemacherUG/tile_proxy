@@ -56,13 +56,18 @@ class TileProxyController extends ProxyController
     return isset($params['provider'], $params['s'], $params['x'], $params['y'], $params['z']);
   }
 
-  protected function createResponse(string $filename, int $cacheHeaderTime): ResponseInterface
+  protected function createResponseByFilename(string $filename, int $cacheHeaderTime): ResponseInterface
   {
     $imgData = file_get_contents($filename);
+    return $this->createResponse($imgData, $cacheHeaderTime);
+  }
+
+  protected function createResponse(string|false $content, int $cacheHeaderTime): ResponseInterface
+  {
     return (new Response())
       ->withHeader('content-type', 'image/png')
       ->withHeader('cache-control', "public, max-age=$cacheHeaderTime, s-maxage=$cacheHeaderTime")
-      ->withBody($this->streamFactory->createStream($imgData));
+      ->withBody($this->streamFactory->createStream($content));
   }
 
   public function buildUrlByType($provider, $s, $z, $x, $y): string
@@ -87,6 +92,9 @@ class TileProxyController extends ProxyController
     $cacheTimeStr =  array_key_exists('cacheTime', $flexSettings) ? $flexSettings['cacheTime'] : '31536000';
     $cacheTime = intval($flexSettings['cacheTime'] ??  $cacheTimeStr);
 
+    $passthroughStr =  array_key_exists('passthrough', $flexSettings) ? $flexSettings['passthrough'] : 0;
+    $passthrough = intval($flexSettings['passthrough'] ??  $passthroughStr);
+
 
     $s = $parms['s'];
     $x = intval($parms['x']);
@@ -102,14 +110,20 @@ class TileProxyController extends ProxyController
       return $this->createErrorResponse(Constants::ERROR_INVALID_PROVIDER);
     }
 
+    $fullUrl = $this->buildUrlByType($provider, $s, $z, $x, $y);
+    if (empty($fullUrl)) { // can't be happen
+      return $this->createErrorResponse(Constants::ERROR_INVALID_PROVIDER);
+    }
+
     $cacheTileFile = "";
     if (!$this->isInBoundingBox($bbox, $z, $x, $y)) {
-      return $this->createResponse($this->emptyTilePath, $cacheTime);
-    } else {
-      $fullUrl = $this->buildUrlByType($provider, $s, $z, $x, $y);
-      if (empty($fullUrl)) { // can't be happen
-        return $this->createErrorResponse(Constants::ERROR_INVALID_PROVIDER);
+      if ($passthrough > 0) {
+
+        return $this->passThrough($fullUrl,$cacheTime);
       }
+      return $this->createResponseByFilename($this->emptyTilePath, $cacheTime);
+    } else {
+
       $cacheTileFile = $this->cacheDir . "/$provider/$z/$x/$y.png";
 
       $isChachValid = true;
@@ -126,15 +140,18 @@ class TileProxyController extends ProxyController
       }
     }
 
-    return $this->createResponse($cacheTileFile, $cacheTime);
+    return $this->createResponseByFilename($cacheTileFile, $cacheTime);
   }
 
-  private function loadTileAndCacheIt($tileURL, $cacheTileFile)
-  {
 
-    if (!file_exists(dirname($cacheTileFile))) {
-      @mkdir(dirname($cacheTileFile), 0777, true);
-    }
+  private function passThrough($fullUrl, $cacheTileFile): ResponseInterface
+  {
+    return $this->createResponse($this->loadTile($fullUrl),$cacheTileFile);
+  }
+
+
+  private function loadTile($tileURL): string
+  {
 
     $ch = curl_init($tileURL);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -147,12 +164,25 @@ class TileProxyController extends ProxyController
     $data = curl_exec($ch);
     $header = curl_getinfo($ch);
     if ($header['http_code'] == "200") {
-      file_put_contents($cacheTileFile, $data);
       curl_close($ch);
-      return true;
+      return $data;
     } else {
       curl_close($ch);
       return false;
     }
+  }
+
+  private function loadTileAndCacheIt($tileURL, $cacheTileFile)
+  {
+    if (!file_exists(dirname($cacheTileFile))) {
+      @mkdir(dirname($cacheTileFile), 0777, true);
+    }
+    $data = $this->loadTile($tileURL);
+    if ($data) {
+      file_put_contents($cacheTileFile, $data);
+      return true;
+    }
+
+    return false;
   }
 }

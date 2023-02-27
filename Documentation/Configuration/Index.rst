@@ -42,6 +42,12 @@ The bounding box rectangle (green) may differ from the moving rectangle because 
     If your map uses different aspect ratios depending on the resolution, the deliverable area should be chosen larger than defined in the JavaScript.
     With Leaflet, for example, it can happen that an area larger the maxBounds is still displayed.
 
+Pass tile outside of the bounding box
+~~~~~~~~~~
+
+If this option is set, all tiles outside the bounding box are passed through directly.
+If this option is switched off, no queries outside the bounding box will be forwarded.
+
 Caching Time (in s) for each tile
 ~~~~~~~~~~
 
