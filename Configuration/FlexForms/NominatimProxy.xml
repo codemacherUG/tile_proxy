@@ -1,0 +1,21 @@
+<T3DataStructure>
+    <sheets>
+        <sDEF>
+            <ROOT>
+                <sheetTitle>Sheet Title</sheetTitle>
+                <type>array</type>
+                <el>
+                    <settings.cacheTime>
+                        <label>
+                            LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.requestCacheTime</label>
+                        <config>
+                            <type>input</type>
+                            <eval>trim,int</eval>
+                            <default>1209600</default>
+                        </config>
+                    </settings.cacheTime>
+                </el>
+            </ROOT>
+        </sDEF>
+    </sheets>
+</T3DataStructure>

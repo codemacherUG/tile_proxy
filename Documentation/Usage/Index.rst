@@ -7,8 +7,8 @@ Usage
 ============
 
 
-Endpoint
-================
+Tile-Proxy-Endpoint
+----------
 
 With this extension you can define a page in the TYPO3 backend as an endpoint for maps.
 
@@ -54,7 +54,7 @@ The http referrer must be your own domain or localhost, otherwise you will recei
 
 
 Leaflet Example
-================
+~~~~~~~~~~
 
 ..  code-block:: javascript
 
@@ -66,7 +66,7 @@ Leaflet Example
 
 
 OpenLayer Example
-================
+~~~~~~~~~~
 
 ..  code-block:: javascript
 
@@ -80,3 +80,41 @@ OpenLayer Example
     });
 
 
+
+Nominatim-Proxy-Endpoint
+----------
+
+With this extension you can define a page in the TYPO3 backend as an endpoint for geocoding request to nominatim.
+
+If the slug for your page is e.g. geo-proxy, the data can be retrieved from:
+
+..  code-block:: javascript
+
+    /geo-proxy/?provider=osm&apitype=search&q=06120&format=json&addressdetails=1
+
+Arguments
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**provider**
+
+Currently only osm (OpenStreetMap) is supported, so the value must be osm.
+
+**apitype**
+
+Type of the api endpoint.
+Permissible types are: 'search','reverse','lookup'
+see https://nominatim.org/release-docs/latest/api/Overview/
+
+
+**all other paramers**
+
+all other parameters are forwarded directly to the nominatim-api.
+
+If the request must be loaded and is not cached, this request will be mapped to:
+
+..  code-block:: javascript
+
+    https://nominatim.openstreetmap.org/search?q=06120&format=json&addressdetails=1
+
+
+The http referrer must be your own domain or localhost, otherwise you will receive error 1001.

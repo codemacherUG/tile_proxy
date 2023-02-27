@@ -9,6 +9,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
 use Codemacher\TileProxy\Cache\CacheBackend;
+use Codemacher\TileProxy\Cache\CleanUpDbCacheBackend;
 use Codemacher\TileProxy\Constants;
 
 (static function ($extKey = 'tile_proxy'): void {
@@ -26,25 +27,45 @@ use Codemacher\TileProxy\Constants;
     ];
   }
 
+  $deleteNominatimCacheOnCacheCleanUp = intval($extConf->get('tile_proxy', 'deleteNominatimCacheOnCacheCleanUp') ?? 0);
+  if ($deleteNominatimCacheOnCacheCleanUp) {
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['nominatim-proxy-cache'] = [
+      'frontend' => VariableFrontend::class,
+      'backend' => CleanUpDbCacheBackend::class,
+      'options' => ['cacheType' => 'cache'],
+      'groups' => ['all'],
+    ];
+  }
+
   $iconRegistry = GeneralUtility::makeInstance(IconRegistry::class);
   $iconRegistry
     ->registerIcon(
       'tile-proxy',
       SvgIconProvider::class,
       [
-        'source' => 'EXT:' . $extKey . '/Resources/Public/Icons/apps-pagetree-page-tileproxy.svg',
+        'source' => 'EXT:' . $extKey . '/Resources/Public/Icons/doktype-tileproxy.svg',
+      ]
+    );
+
+  $iconRegistry
+    ->registerIcon(
+      'nominatim-proxy',
+      SvgIconProvider::class,
+      [
+        'source' => 'EXT:' . $extKey . '/Resources/Public/Icons/doktype-nominatimproxy.svg',
       ]
     );
 
   // Allow backend users to drag and drop the new page type:
   ExtensionManagementUtility::addUserTSConfig(
-    'options.pageTree.doktypesToShowInNewPageDragArea := addToList(' . Constants::DOKTYPE . ')'
+    'options.pageTree.doktypesToShowInNewPageDragArea := addToList(' . Constants::DOKTYPE_TILE_PROXY . ',' .  Constants::DOKTYPE_NOMINATIM_PROXY . ')'
   );
+
 
 
   $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1676502776] = [
     'nodeName' => 'boundingboxmap',
     'priority' => 40,
     'class' => \Codemacher\TileProxy\Form\Element\BoundingBoxMapElement::class,
-];
+  ];
 })();

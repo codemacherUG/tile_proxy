@@ -12,25 +12,19 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\Http\StreamFactory;
-use TYPO3\CMS\Core\Http\JsonResponse;
 
 use Codemacher\TileProxy\LatLngToTile;
 use Codemacher\TileProxy\Constants;
 
-class CachedTileProxyController
+class TileProxyController extends ProxyController
 {
-  private StreamFactory $streamFactory;
   private string $errorTileUrl;
   private string $emptyTilePath;
   private string $cacheDir;
 
-  const VALID_TYPES = ["osm"];
-
   public function __construct()
   {
-    $this->streamFactory = GeneralUtility::makeInstance(StreamFactory::class);
-
+    parent::__construct();
     $this->cacheDir = Environment::getVarPath() . '/tileproxy/cache';
 
     $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class);
@@ -55,18 +49,25 @@ class CachedTileProxyController
     return !(!LatLngToTile::inRange($x, $minTileX, $maxTileX) || !LatLngToTile::inRange($y, $minTileY, $maxTileY));
   }
 
-  protected function createResponse(string $filename, int $cacheHeaderTime): ResponseInterface
+
+  protected function parametersComplet(ServerRequestInterface $request): bool
+  {
+    $params = $request->getQueryParams();
+    return isset($params['provider'], $params['s'], $params['x'], $params['y'], $params['z']);
+  }
+
+  protected function createResponseByFilename(string $filename, int $cacheHeaderTime): ResponseInterface
   {
     $imgData = file_get_contents($filename);
+    return $this->createResponse($imgData, $cacheHeaderTime);
+  }
+
+  protected function createResponse(string|false $content, int $cacheHeaderTime): ResponseInterface
+  {
     return (new Response())
       ->withHeader('content-type', 'image/png')
       ->withHeader('cache-control', "public, max-age=$cacheHeaderTime, s-maxage=$cacheHeaderTime")
-      ->withBody($this->streamFactory->createStream($imgData));
-  }
-
-  protected function createErrorResponse(int $code): ResponseInterface
-  {
-    return new JsonResponse(['error' => $code], 403);
+      ->withBody($this->streamFactory->createStream($content));
   }
 
   public function buildUrlByType($provider, $s, $z, $x, $y): string
@@ -80,11 +81,19 @@ class CachedTileProxyController
 
   public function process(array $flexSettings, ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
   {
+
+    if (!$this->parametersComplet($request)) {
+      return $this->createErrorResponse(Constants::ERROR_INVALID_PARAMETERS);
+    }
+
     $parms = $request->getQueryParams();
     $bboxStr = array_key_exists('bbox', $flexSettings) ? $flexSettings['bbox'] : '11.86,51.41,12.07,51.55';
     $bbox = explode(',', $bboxStr);
     $cacheTimeStr =  array_key_exists('cacheTime', $flexSettings) ? $flexSettings['cacheTime'] : '31536000';
     $cacheTime = intval($flexSettings['cacheTime'] ??  $cacheTimeStr);
+
+    $passthroughStr =  array_key_exists('passthrough', $flexSettings) ? $flexSettings['passthrough'] : 0;
+    $passthrough = intval($flexSettings['passthrough'] ??  $passthroughStr);
 
 
     $s = $parms['s'];
@@ -101,14 +110,20 @@ class CachedTileProxyController
       return $this->createErrorResponse(Constants::ERROR_INVALID_PROVIDER);
     }
 
+    $fullUrl = $this->buildUrlByType($provider, $s, $z, $x, $y);
+    if (empty($fullUrl)) { // can't be happen
+      return $this->createErrorResponse(Constants::ERROR_INVALID_PROVIDER);
+    }
+
     $cacheTileFile = "";
     if (!$this->isInBoundingBox($bbox, $z, $x, $y)) {
-      return $this->createResponse($this->emptyTilePath, $cacheTime);
-    } else {
-      $fullUrl = $this->buildUrlByType($provider, $s, $z, $x, $y);
-      if (empty($fullUrl)) { // can't be happen
-        return $this->createErrorResponse(Constants::ERROR_INVALID_PROVIDER);
+      if ($passthrough > 0) {
+
+        return $this->passThrough($fullUrl,$cacheTime);
       }
+      return $this->createResponseByFilename($this->emptyTilePath, $cacheTime);
+    } else {
+
       $cacheTileFile = $this->cacheDir . "/$provider/$z/$x/$y.png";
 
       $isChachValid = true;
@@ -125,15 +140,18 @@ class CachedTileProxyController
       }
     }
 
-    return $this->createResponse($cacheTileFile, $cacheTime);
+    return $this->createResponseByFilename($cacheTileFile, $cacheTime);
   }
 
-  private function loadTileAndCacheIt($tileURL, $cacheTileFile)
-  {
 
-    if (!file_exists(dirname($cacheTileFile))) {
-      @mkdir(dirname($cacheTileFile), 0777, true);
-    }
+  private function passThrough($fullUrl, $cacheTileFile): ResponseInterface
+  {
+    return $this->createResponse($this->loadTile($fullUrl),$cacheTileFile);
+  }
+
+
+  private function loadTile($tileURL): string
+  {
 
     $ch = curl_init($tileURL);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -146,12 +164,25 @@ class CachedTileProxyController
     $data = curl_exec($ch);
     $header = curl_getinfo($ch);
     if ($header['http_code'] == "200") {
-      file_put_contents($cacheTileFile, $data);
       curl_close($ch);
-      return true;
+      return $data;
     } else {
       curl_close($ch);
       return false;
     }
+  }
+
+  private function loadTileAndCacheIt($tileURL, $cacheTileFile)
+  {
+    if (!file_exists(dirname($cacheTileFile))) {
+      @mkdir(dirname($cacheTileFile), 0777, true);
+    }
+    $data = $this->loadTile($tileURL);
+    if ($data) {
+      file_put_contents($cacheTileFile, $data);
+      return true;
+    }
+
+    return false;
   }
 }
