@@ -13,6 +13,18 @@ Delete all cached tiles if the cache is cleared
 
 If this option is activated, all cached tiles are deleted when the TYPO3 cache is cleared.
 
+Delete all nominatim request caches if the cache is cleared
+-------------------
+
+If this option is activated, all cached requests are deleted when the TYPO3 cache is cleared.
+
+
+Maximum number of records stored in the database
+-------------------
+
+The maximum number of records stored in the database.
+
+
 Path to error tile png (absolute)
 -------------------
 

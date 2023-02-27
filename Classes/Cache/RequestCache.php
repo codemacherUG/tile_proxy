@@ -27,10 +27,12 @@ class RequestCache
     return null;
   }
 
-  public function setData(string $url, array $contentInfo) : void {
+  public function setData(string $url, array $contentInfo, int $maxDbRecordsToCache) : void {
   
     $url_hash = md5($url);
-    $this->repo->insert($url_hash, gzcompress(serialize($contentInfo)));
+    if($this->repo->count() < $maxDbRecordsToCache) {
+      $this->repo->insert($url_hash, gzcompress(serialize($contentInfo)));
+    } 
   }
 
   public function cleanUp(int $cacheTime) : void {

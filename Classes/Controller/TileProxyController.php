@@ -12,7 +12,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\Http\StreamFactory;
 use TYPO3\CMS\Core\Http\JsonResponse;
 
 use Codemacher\TileProxy\LatLngToTile;

@@ -4,24 +4,33 @@ declare(strict_types=1);
 
 namespace Codemacher\TileProxy\Controller;
 
-use Codemacher\TileProxy\Cache\RequestCache;
+
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use TYPO3\CMS\Core\Http\Response;
-
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use Codemacher\TileProxy\Constants;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Codemacher\TileProxy\Cache\RequestCache;
 
 class NominatimProxyController extends ProxyController
 {
 
+  protected int $maxDbRecordsToCache;
   protected RequestCache $requestCache;
   public function __construct()
   {
     parent::__construct();
     $this->requestCache = GeneralUtility::makeInstance((RequestCache::class));
+    $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class);
+    $maxDbRecordsToCacheStr = $extConf->get('tile_proxy', 'maxDbRecordsToCache');
+    if (empty($maxDbRecordsToCache)) {
+      $this->maxDbRecordsToCache = 10000;
+    } else {
+      $this->maxDbRecordsToCache = intval($maxDbRecordsToCacheStr);
+    }
   }
 
   protected function createResponse(array $contentInfo): ResponseInterface
@@ -66,14 +75,13 @@ class NominatimProxyController extends ProxyController
       return $this->createResponse($cachedData);
     }
 
-
     $contentInfo = $this->loadContentFormExternal($fullUrl);
     if ($contentInfo) {
-      if ($this->requestCache->setData($fullUrl, $contentInfo)) {
+      if ($this->requestCache->setData($fullUrl, $contentInfo,$this->maxDbRecordsToCache)) {
       }
       return $this->createResponse($contentInfo);
     } else {
-      return $this->createErrorResponse(Constants::ERROR_INVALID_ANSWER);      
+      return $this->createErrorResponse(Constants::ERROR_INVALID_ANSWER);
     }
   }
 

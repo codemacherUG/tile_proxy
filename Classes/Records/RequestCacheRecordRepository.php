@@ -39,6 +39,16 @@ class RequestCacheRecordRepository extends BaseRecordRepository implements Singl
       ->fetchAssociative();
   }
  
+  public function count() : int {
+    $queryBuilder = $this->getQueryBuilder();
+    $count = $queryBuilder
+        ->count('url_hash')
+        ->from($this->table)
+        ->executeQuery()
+        ->fetchOne();    
+    return $count;
+  }
+
   public function insert(string $hash,string $data): void
   {
 
