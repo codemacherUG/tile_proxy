@@ -27,7 +27,7 @@ class NominatimProxyController extends ProxyController
     $this->requestCache = GeneralUtility::makeInstance((RequestCache::class));
     $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class);
     $maxDbRecordsToCacheStr = $extConf->get('tile_proxy', 'maxDbRecordsToCache');
-    if (empty($maxDbRecordsToCache)) {
+    if (empty($maxDbRecordsToCacheStr)) {
       $this->maxDbRecordsToCache = 10000;
     } else {
       $this->maxDbRecordsToCache = intval($maxDbRecordsToCacheStr);

@@ -25,6 +25,12 @@ Maximum number of records stored in the database
 The maximum number of records stored in the database.
 
 
+Maximum Cache-Size in MB (When the limit is reached, the tiles are only passed through)
+-------------------
+
+This is the maximum size of the file cache used for tiles over all endpoints  (if more than one endpoint is specified)
+
+
 Path to error tile png (absolute)
 -------------------
 

@@ -7,6 +7,9 @@ deleteNominatimCacheOnCacheCleanUp = 0
 # cat=basic; type=string; label=Maximum number of records stored in the database
 maxDbRecordsToCache = 10000
 
+# cat=basic; type=string; label=Maximum Cache-Size in MB (When the limit is reached, the tiles are only passed through)
+maxTileFileCacheSizeMb = 120
+
 # cat=basic; type=string; label=Path to error tile png (absolute)
 errorTilePath = 
 

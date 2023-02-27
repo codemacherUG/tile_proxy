@@ -21,6 +21,7 @@ class TileProxyController extends ProxyController
   private string $errorTileUrl;
   private string $emptyTilePath;
   private string $cacheDir;
+  private int $maxTileFileCacheSize;
 
   public function __construct()
   {
@@ -36,6 +37,13 @@ class TileProxyController extends ProxyController
     $this->emptyTilePath = $extConf->get('tile_proxy', 'emptyTilePath');
     if (empty($this->emptyTilePath)) {
       $this->emptyTilePath  = ExtensionManagementUtility::extPath('tile_proxy') . "Resources/Public/Images/tile-empty.png";
+    }
+
+    $maxTileFileCacheSizeMbStr = $extConf->get('tile_proxy', 'maxTileFileCacheSizeMb');
+    if (empty($maxTileFileCacheSizeMbStr)) {
+      $this->maxTileFileCacheSize = 120 * 1024 * 1024;
+    } else {
+      $this->maxTileFileCacheSize = intval($maxTileFileCacheSizeMbStr) * 1024 * 1024;
     }
   }
 
@@ -79,6 +87,17 @@ class TileProxyController extends ProxyController
     return null;
   }
 
+  function folderSize($dir)
+  {
+    $size = 0;
+
+    foreach (glob(rtrim($dir, '/') . '/*', GLOB_NOSORT) as $each) {
+      $size += is_file($each) ? filesize($each) : $this->folderSize($each);
+    }
+
+    return $size;
+  }
+
   public function process(array $flexSettings, ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
   {
 
@@ -97,7 +116,6 @@ class TileProxyController extends ProxyController
 
     $cacheByMaxZoomStr =  array_key_exists('cacheByMaxZoom', $flexSettings) ? $flexSettings['cacheByMaxZoom'] : 6;
     $cacheByMaxZoom = intval($flexSettings['cacheByMaxZoom'] ??  $cacheByMaxZoomStr);
-    
 
 
     $s = $parms['s'];
@@ -122,8 +140,7 @@ class TileProxyController extends ProxyController
     $cacheTileFile = "";
     if ($z > $cacheByMaxZoom && !$this->isInBoundingBox($bbox, $z, $x, $y)) {
       if ($passthrough > 0) {
-
-        return $this->passThrough($fullUrl,$cacheTime);
+        return $this->passThrough($fullUrl, $cacheTime);
       }
       return $this->createResponseByFilename($this->emptyTilePath, $cacheTime);
     } else {
@@ -132,10 +149,16 @@ class TileProxyController extends ProxyController
 
       $isChachValid = true;
       if (!file_exists($cacheTileFile)) {
+        if ($this->folderSize($this->cacheDir) > $this->maxTileFileCacheSize) {
+          return $this->passThrough($fullUrl, $cacheTime);
+        }
         $isChachValid = $this->loadTileAndCacheIt($fullUrl, $cacheTileFile);
       } else {
         $fileAge = time() - filemtime($cacheTileFile);
         if ($fileAge > $cacheTime) {
+          if ($this->folderSize($this->cacheDir) > $this->maxTileFileCacheSize) {
+            return $this->passThrough($fullUrl, $cacheTime);
+          }
           $isChachValid = $this->loadTileAndCacheIt($fullUrl, $cacheTileFile);
         }
       }
@@ -150,7 +173,7 @@ class TileProxyController extends ProxyController
 
   private function passThrough($fullUrl, $cacheTileFile): ResponseInterface
   {
-    return $this->createResponse($this->loadTile($fullUrl),$cacheTileFile);
+    return $this->createResponse($this->loadTile($fullUrl), $cacheTileFile);
   }
 
 
