@@ -53,9 +53,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var BoundingBoxMap = /** @class */ (function () {
-    function BoundingBoxMap(parent, boundingBoxStringList, onChangeCallback) {
+    function BoundingBoxMap(parent, boundingBoxStringList, decimalPlaces, onChangeCallback) {
         var _this = this;
+        this.decimalPlaces = 2;
         this.parent = parent;
+        this.decimalPlaces = decimalPlaces;
         this.onChangeCallBack = onChangeCallback;
         (function () {
             _this.mount(_this.bboxTextToArray(boundingBoxStringList));
@@ -92,7 +94,8 @@ var BoundingBoxMap = /** @class */ (function () {
         }
     };
     BoundingBoxMap.prototype.roundCoordValue = function (coord) {
-        return [Math.round((coord[0]) * 100) / 100, Math.round((coord[1]) * 100) / 100];
+        var roundFactor = Math.pow(10, this.decimalPlaces);
+        return [Math.round((coord[0]) * roundFactor) / roundFactor, Math.round((coord[1]) * roundFactor) / roundFactor];
     };
     BoundingBoxMap.prototype.buildBoundingBoxRectString = function () {
         var coordinates = this.bbox.getGeometry().getFlatCoordinates();
@@ -45039,7 +45042,7 @@ var BoundingBoxMapElement = /** @class */ (function () {
             var currentElementSection = elements[i];
             var selectElement = currentElementSection.querySelector('input[type="text"]');
             var newBoundingBoxStringList = selectElement.value;
-            var map = new _BoundingBoxMap__WEBPACK_IMPORTED_MODULE_0__["default"](currentElementSection, newBoundingBoxStringList, function (newBoundingBoxStringList) {
+            var map = new _BoundingBoxMap__WEBPACK_IMPORTED_MODULE_0__["default"](currentElementSection, newBoundingBoxStringList, Number(selectElement.dataset.decimalplaces), function (newBoundingBoxStringList) {
                 selectElement.value = newBoundingBoxStringList;
             });
             selectElement.addEventListener('change', function (event) {

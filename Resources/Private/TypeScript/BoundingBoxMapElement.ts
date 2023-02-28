@@ -8,7 +8,7 @@ class BoundingBoxMapElement {
       let currentElementSection = elements[i] as HTMLElement;
       let selectElement = currentElementSection.querySelector('input[type="text"]') as HTMLInputElement;
       let newBoundingBoxStringList = selectElement.value;
-      const map = new BoundingBoxMap(currentElementSection,newBoundingBoxStringList, (newBoundingBoxStringList) => {
+      const map = new BoundingBoxMap(currentElementSection,newBoundingBoxStringList, Number(selectElement.dataset.decimalplaces), (newBoundingBoxStringList) => {
         selectElement.value = newBoundingBoxStringList;
       });
 

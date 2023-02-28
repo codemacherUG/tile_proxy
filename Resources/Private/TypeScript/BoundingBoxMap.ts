@@ -21,9 +21,11 @@ class BoundingBoxMap {
   bbox: Feature<Polygon>;
   bboxRounded: Feature<Polygon>;
   vectorLayer: VectorLayer<VectorSource<Geometry>>;
+  decimalPlaces: number = 2;
 
-  constructor(parent: HTMLElement, boundingBoxStringList: string, onChangeCallback: (newBoundingBoxStringList: string) => void) {
+  constructor(parent: HTMLElement, boundingBoxStringList: string, decimalPlaces: number, onChangeCallback: (newBoundingBoxStringList: string) => void) {
     this.parent = parent;
+    this.decimalPlaces = decimalPlaces;
     this.onChangeCallBack = onChangeCallback;
     (() => {
       this.mount(this.bboxTextToArray(boundingBoxStringList));
@@ -63,9 +65,10 @@ class BoundingBoxMap {
       this.map.getView().setZoom(8);
     }
   }
-
+  
   private roundCoordValue(coord: Coordinate) : Coordinate {
-    return [Math.round((coord[0]) * 100) / 100, Math.round((coord[1]) * 100) / 100];
+    let roundFactor = 10**this.decimalPlaces;
+    return [Math.round((coord[0]) * roundFactor) / roundFactor, Math.round((coord[1]) * roundFactor) / roundFactor];
   }
 
   private buildBoundingBoxRectString(): string {

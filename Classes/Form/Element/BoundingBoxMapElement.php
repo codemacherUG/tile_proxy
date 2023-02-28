@@ -19,6 +19,8 @@ class BoundingBoxMapElement extends AbstractFormElement
         $fieldInformationResult = $this->renderFieldInformation();
         $fieldInformationHtml = $fieldInformationResult['html'];
         $resultArray = $this->mergeChildReturnIntoExistingResult($this->initializeResultArray(), $fieldInformationResult, false);
+        $decimalPlaces = $parameterArray['fieldConf']['config']['parameters']['decimalPlaces'] ?? 2;
+
 
         $fieldId = StringUtility::getUniqueId('formengine-textarea-');
 
@@ -26,7 +28,8 @@ class BoundingBoxMapElement extends AbstractFormElement
             'id' => $fieldId,
             'name' => htmlspecialchars($parameterArray['itemFormElName']),
             'size' => '30',
-            'data-formengine-input-name' => htmlspecialchars($parameterArray['itemFormElName'])
+            'data-formengine-input-name' => htmlspecialchars($parameterArray['itemFormElName']),
+            'data-decimalplaces' => $decimalPlaces
         ];
 
 
