@@ -7,18 +7,10 @@ namespace Codemacher\TileProxy\Form\Element;
 use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
 use TYPO3\CMS\Core\Information\Typo3Version;
 
-class BoundingBoxMapElement extends MapElement
+class CenterZoomMapElement extends MapElement
 {
 
-    protected string $mapClassName = "bboxmap";
-
-    protected function createAttributes(array $parameterArray): array
-    {
-        $attributes = parent::createAttributes($parameterArray);
-        $decimalPlaces = $parameterArray['fieldConf']['config']['parameters']['decimalPlaces'] ?? 2;
-        $attributes['data-decimalplaces']  = $decimalPlaces;
-        return $attributes;
-    }
+    protected string $mapClassName = "centerzoommap";
 
     protected function enrichResultArray($resultArray): array
     {
@@ -26,11 +18,11 @@ class BoundingBoxMapElement extends MapElement
         $typo3Version = new Typo3Version();
         if ($typo3Version->getMajorVersion() < 12) {
             $resultArray['requireJsModules'][] = JavaScriptModuleInstruction::forRequireJS(
-                'TYPO3/CMS/TileProxy/BoundingBoxMapElement'
+                'TYPO3/CMS/TileProxy/CenterZoomMapElement'
             );
         } else {
             $resultArray['javaScriptModules'][] =
-                JavaScriptModuleInstruction::create('@codemacher/tile_proxy/BoundingBoxMapElement.js');
+                JavaScriptModuleInstruction::create('@codemacher/tile_proxy/CenterZoomMapElement.js');
         }
 
         $resultArray['stylesheetFiles'][] = 'EXT:tile_proxy/Resources/Public/Css/MapElement.css';

@@ -152,7 +152,9 @@ let modules = { ...entry };
 
 module.exports = function (env, args) {
   modules.entry = {
-    BoundingBoxMapElement: [path.resolve(__dirname, '../Resources/Private/TypeScript/BoundingBoxMapElement.ts'), path.resolve(__dirname, '../Resources/Private/Scss/BoundingBoxMap.scss')],
+    MapElement: [path.resolve(__dirname, '../Resources/Private/Scss/MapElement.scss')],
+    BoundingBoxMapElement: [path.resolve(__dirname, '../Resources/Private/TypeScript/BoundingBoxMapElement.ts')],
+    CenterZoomMapElement: [path.resolve(__dirname, '../Resources/Private/TypeScript/CenterZoomMapElement.ts')],
   };
   modules.output.path = path.resolve(__dirname, '../Resources/Public/JavaScript/');
   modules.externals = {};

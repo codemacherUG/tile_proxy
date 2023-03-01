@@ -68,4 +68,10 @@ use Codemacher\TileProxy\Constants;
     'priority' => 40,
     'class' => \Codemacher\TileProxy\Form\Element\BoundingBoxMapElement::class,
   ];
+
+  $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1677664804] = [
+    'nodeName' => 'centerzoommap',
+    'priority' => 40,
+    'class' => \Codemacher\TileProxy\Form\Element\CenterZoomMapElement::class,
+  ];
 })();
