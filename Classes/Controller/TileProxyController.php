@@ -71,7 +71,7 @@ class TileProxyController extends ProxyController
     return $this->createResponse($imgData, $cacheHeaderTime);
   }
 
-  protected function createResponse(string|false $content, int $cacheHeaderTime): ResponseInterface
+  protected function createResponse($content, int $cacheHeaderTime): ResponseInterface
   {
     return (new Response())
       ->withHeader('content-type', 'image/png')
