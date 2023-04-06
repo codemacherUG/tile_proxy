@@ -179,11 +179,10 @@ class TileProxyController extends ProxyController
 
     $data = curl_exec($ch);
     $header = curl_getinfo($ch);
+    curl_close($ch);
     if ($header['http_code'] == "200") {
-      curl_close($ch);
       return $data;
     } else {
-      curl_close($ch);
       return false;
     }
   }
