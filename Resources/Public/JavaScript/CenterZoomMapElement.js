@@ -27813,6 +27813,7 @@ class TileLayer extends BaseTile {
 
 
 
+
 var CenterZoomMap = /** @class */ (function () {
     function CenterZoomMap(parent, centerZoomString, onChangeCallback) {
         var _this = this;
@@ -27856,6 +27857,7 @@ var CenterZoomMap = /** @class */ (function () {
                     source: new source_OSM(),
                 }),
             ],
+            interactions: defaults_defaults({ mouseWheelZoom: false }),
             target: this.parent.querySelector('.map'),
             view: new ol_View({
                 zoom: 10,

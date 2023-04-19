@@ -13,6 +13,7 @@ import { Coordinate } from 'ol/coordinate';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { isEmpty } from 'ol/extent';
 import { Fill, Stroke, Style} from 'ol/style.js';
+import { defaults as InteractionDefaults } from 'ol/interaction';
 
 class BoundingBoxMap {
   parent: HTMLElement;
@@ -110,6 +111,7 @@ class BoundingBoxMap {
           source: new OSM(),
         }),
       ],
+      interactions: InteractionDefaults({ mouseWheelZoom: false }),
       target: this.parent.querySelector('.map') as HTMLElement,
       view: new View({
         zoom: 10,

@@ -41555,6 +41555,7 @@ ol_interaction_Transform.prototype.Cursors = {
 
 
 
+
 var BoundingBoxMap = /** @class */ (function () {
     function BoundingBoxMap(parent, boundingBoxStringList, decimalPlaces, onChangeCallback) {
         var _this = this;
@@ -41643,6 +41644,7 @@ var BoundingBoxMap = /** @class */ (function () {
                     source: new source_OSM(),
                 }),
             ],
+            interactions: defaults_defaults({ mouseWheelZoom: false }),
             target: this.parent.querySelector('.map'),
             view: new ol_View({
                 zoom: 10,

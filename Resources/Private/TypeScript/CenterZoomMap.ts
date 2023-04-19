@@ -12,7 +12,8 @@ import { shiftKeyOnly } from 'ol/events/condition';
 import { Coordinate } from 'ol/coordinate';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { isEmpty } from 'ol/extent';
-import { Fill, Stroke, Style} from 'ol/style.js';
+import { Fill, Stroke, Style } from 'ol/style.js';
+import { defaults as InteractionDefaults } from 'ol/interaction';
 
 class CenterZoomMap {
   parent: HTMLElement;
@@ -20,7 +21,7 @@ class CenterZoomMap {
   map: Map;
   vectorLayer: VectorLayer<VectorSource<Geometry>>;
 
-  constructor(parent: HTMLElement, centerZoomString: string,  onChangeCallback: (centerZoomString: string) => void) {
+  constructor(parent: HTMLElement, centerZoomString: string, onChangeCallback: (centerZoomString: string) => void) {
     this.parent = parent;
     this.onChangeCallBack = onChangeCallback;
     (() => {
@@ -28,7 +29,7 @@ class CenterZoomMap {
     })();
   }
 
-  private mount(centerZoom: {center:Coordinate, zoom:number}): void {
+  private mount(centerZoom: { center: Coordinate, zoom: number }): void {
     this.buildMap();
     this.registerEvents();
     this.updateCenterZoom(centerZoom);
@@ -38,28 +39,28 @@ class CenterZoomMap {
     this.updateCenterZoom(this.centerZoomStringToObject(centerZoomString));
   }
 
-  private centerZoomStringToObject(value: string): {center:Coordinate, zoom:number} {
+  private centerZoomStringToObject(value: string): { center: Coordinate, zoom: number } {
 
     let stringArray = value.split(",");
     let center = fromLonLat([parseFloat(stringArray[0]), parseFloat(stringArray[1])]);
     let zoom = parseFloat(stringArray[2]);
     return {
-      center:center,
-      zoom:zoom
+      center: center,
+      zoom: zoom
     };
   }
 
-  protected updateCenterZoom(centerZoom:{center:Coordinate, zoom:number}): void {
-      this.map.getView().setCenter(centerZoom.center);
-      this.map.getView().setZoom(centerZoom.zoom);
+  protected updateCenterZoom(centerZoom: { center: Coordinate, zoom: number }): void {
+    this.map.getView().setCenter(centerZoom.center);
+    this.map.getView().setZoom(centerZoom.zoom);
   }
-  
+
 
   private buildCenterZoomString(): string {
-    
+
     const center = toLonLat(this.map.getView().getCenter());
     const zoom = this.map.getView().getZoom();
-    let resutlArray = [center[0],center[1], Math.round(zoom)];
+    let resutlArray = [center[0], center[1], Math.round(zoom)];
     return resutlArray.join(',');
   }
 
@@ -71,6 +72,7 @@ class CenterZoomMap {
           source: new OSM(),
         }),
       ],
+      interactions: InteractionDefaults({ mouseWheelZoom: false }),
       target: this.parent.querySelector('.map') as HTMLElement,
       view: new View({
         zoom: 10,
