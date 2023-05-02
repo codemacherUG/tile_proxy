@@ -5,14 +5,8 @@ import View from 'ol/View.js';
 import VectorLayer from 'ol/layer/Vector.js';
 import Geometry from 'ol/geom/Geometry.js';
 import VectorSource from 'ol/source/Vector.js';
-import Feature from 'ol/Feature.js';
-import Polygon from 'ol/geom/Polygon.js';
-import Transform from 'ol-ext/interaction/Transform';
-import { shiftKeyOnly } from 'ol/events/condition';
 import { Coordinate } from 'ol/coordinate';
 import { fromLonLat, toLonLat } from 'ol/proj';
-import { isEmpty } from 'ol/extent';
-import { Fill, Stroke, Style } from 'ol/style.js';
 import { defaults as InteractionDefaults } from 'ol/interaction';
 
 class CenterZoomMap {

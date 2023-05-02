@@ -22,4 +22,4 @@ class BoundingBoxMapElement {
 }
 
 new BoundingBoxMapElement();
-
+export {};

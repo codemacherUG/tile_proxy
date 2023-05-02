@@ -21,4 +21,4 @@ class CenterZoomMapElement {
 }
 
 new CenterZoomMapElement();
-
+export {};
