@@ -1,6 +1,6 @@
 import CenterZoomMap from './CenterZoomMap';
 
-class CenterZoomMapElement {
+export default class CenterZoomMapElement {
 
   public constructor() {
     const elements = document.querySelectorAll('.centerzoommap');
@@ -21,4 +21,4 @@ class CenterZoomMapElement {
 }
 
 new CenterZoomMapElement();
-export {};
+

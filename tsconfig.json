@@ -2,10 +2,12 @@
   "compilerOptions": {
     "outDir": "./Resoures/Public/JavaScript",
     "noImplicitAny": true,
-    "module": "es6",
+    "moduleDetection": "force",
+    "module": "commonjs",
     "target": "es5",
     "jsx": "react",
     "allowJs": true,
+    "skipLibCheck": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "baseUrl": "./.build/node_modules",

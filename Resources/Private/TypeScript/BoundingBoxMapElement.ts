@@ -1,6 +1,6 @@
 import BoundingBoxMap from './BoundingBoxMap';
 
-class BoundingBoxMapElement {
+export default class BoundingBoxMapElement {
 
   public constructor() {
     const elements = document.querySelectorAll('.bboxmap');
@@ -22,4 +22,4 @@ class BoundingBoxMapElement {
 }
 
 new BoundingBoxMapElement();
-export {};
+
