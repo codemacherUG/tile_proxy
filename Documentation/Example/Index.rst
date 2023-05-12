@@ -103,11 +103,10 @@ OpenLayers
             let southWest = L.latLng(51.41, 11.86),
                 northEast = L.latLng(51.55, 12.07),
                 bounds = L.latLngBounds(southWest, northEast);
-
+            map.setMaxBounds(bounds);
             const tiles = L.tileLayer('/tile-proxy/?provider=osm&z={z}&x={x}&y={y}&s={s}', {
-               maxBounds: bounds,
-               minZoom: 13,
-               attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                minZoom: 13,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }).addTo(map);
 
             const marker = L.marker(markerLocation).addTo(map)
