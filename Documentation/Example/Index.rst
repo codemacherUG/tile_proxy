@@ -95,36 +95,24 @@ OpenLayers
     </head>
 
     <body>
-    <div id="map" style="width: 600px; height: 400px;"></div>
-    <script>
-        let osmSource = new ol.source.XYZ({
-        attributions: '&#169; ' +
-            '<a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> ' +
-            'contributors.',
-        urls: [
-            '/tile-proxy/?provider=osm&z={z}&x={x}&y={y}&s=a',
-            '/tile-proxy/?provider=osm&z={z}&x={x}&y={y}&s=b',
-            '/tile-proxy/?provider=osm&z={z}&x={x}&y={y}&s=c',
-        ]
-        });
+        <div id="map" style="width: 600px; height: 400px;"></div>
+        <script>
+            let markerLocation = [51.4974250793457, 11.940057754516602];
 
-        let extent = ol.proj.transformExtent([11.86, 51.41, 12.07, 51.55], 'EPSG:4326', 'EPSG:3857')
-        let center = ol.proj.fromLonLat([11.940057754516602, 51.4974250793457]);
-        var map = new ol.Map({
+            const map = L.map('map').setView(markerLocation, 13);
+            let southWest = L.latLng(51.41, 11.86),
+                northEast = L.latLng(51.55, 12.07),
+                bounds = L.latLngBounds(southWest, northEast);
 
-        layers: [
-            new ol.layer.Tile({
-            source: osmSource
-            })
-        ],
-        target: 'map',
-        view: new ol.View({
-            center: center,
-            zoom: 12,
-            minZoom: 14
-        })
-        });
-    </script>
+            const tiles = L.tileLayer('/tile-proxy/?provider=osm&z={z}&x={x}&y={y}&s={s}', {
+               maxBounds: bounds,
+               minZoom: 13,
+               attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+
+            const marker = L.marker(markerLocation).addTo(map)
+                .bindPopup('<b>Hello world!</b><br />I am a popup.').openPopup();
+        </script>
     </body>
 
     </html>
