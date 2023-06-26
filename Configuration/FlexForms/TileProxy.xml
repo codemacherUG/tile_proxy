@@ -1,51 +1,62 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <T3DataStructure>
     <sheets>
         <sDEF>
             <ROOT>
-                <sheetTitle>Sheet Title</sheetTitle>
+                <TCEforms>
+                    <sheetTitle>Sheet Title</sheetTitle>
+                </TCEforms>
                 <type>array</type>
                 <el>
                     <settings.bbox>
-                        <label>
-                            LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.bbox</label>
-                        <config>
-                            <type>user</type>
-                            <renderType>boundingboxmap</renderType>
-                            <eval>trim,required</eval>
-                            <default>11.86,51.41,12.07,51.55</default>
-                        </config>
+                        <TCEforms>
+                            <label>
+                                LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.bbox</label>
+                            <config>
+                                <type>user</type>
+                                <renderType>boundingboxmap</renderType>
+                                <eval>trim,required</eval>
+                                <default>11.86,51.41,12.07,51.55</default>
+                            </config>
+                        </TCEforms>
                     </settings.bbox>
                     <settings.cachingUntilZoom>
-                        <label>
-                            LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.cachingUntilZoom</label>
-                        <config>
-                            <type>input</type>
-                            <eval>trim,int</eval>
-                            <default>6</default>
-                        </config>
+                        <TCEforms>
+                            <label>
+                                LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.cachingUntilZoom</label>
+                            <config>
+                                <type>input</type>
+                                <eval>trim,int</eval>
+                                <default>6</default>
+                            </config>
+                        </TCEforms>
                     </settings.cachingUntilZoom>
                     <settings.passthrough>
-                        <label>
-                            LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.passthrough</label>
-                        <config>
-                            <type>check</type>
-                            <items type="array">
-                                <numIndex index="0" type="array">
-                                    <numIndex index="0">
-                                        LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.yes</numIndex>
-                                    <numIndex index="1"></numIndex>
-                                </numIndex>
-                            </items>
-                        </config>
+                        <TCEforms>
+                            <label>
+                                LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.passthrough</label>
+                            <config>
+                                <type>check</type>
+                                <items type="array">
+                                    <numIndex index="0" type="array">
+                                        <numIndex index="0">
+                                            LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.yes</numIndex>
+                                        <numIndex index="1"></numIndex>
+                                    </numIndex>
+                                </items>
+                            </config>
+                        </TCEforms>
                     </settings.passthrough>
                     <settings.cacheTime>
-                        <label>
-                            LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.cacheTime</label>
-                        <config>
-                            <type>input</type>
-                            <eval>trim,int</eval>
-                            <default>31536000</default>
-                        </config>
+                        <TCEforms>
+                            <label>
+                                LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.cacheTime</label>
+                            <config>
+                                <type>input</type>
+                                <eval>trim,int</eval>
+                                <default>31536000</default>
+                            </config>
+                        </TCEforms>
                     </settings.cacheTime>
                 </el>
             </ROOT>
