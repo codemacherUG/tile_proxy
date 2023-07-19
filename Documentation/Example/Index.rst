@@ -11,7 +11,7 @@ Here are simples example for Leaflet and OpenLayers.
 To try it out, simply save the file in the typo3 webroot and open it in the browser.
 (The endpoint "/tile-proxy" must of course be defined).
 
-Leaflet
+OpenLayers
 -------------
 
 ..  code-block:: html
@@ -70,7 +70,7 @@ Leaflet
 
     </html>
 
-OpenLayers
+Leaflet
 -------------
 
 ..  code-block:: html
@@ -81,9 +81,11 @@ OpenLayers
     <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Quick Start - OpenLayer</title>
-    <script src="https://cdn.jsdelivr.net/npm/ol@v7.2.2/dist/ol.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.2.2/ol.css">
+    <title>Quick Start - Leaflet</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
 
     <style>
         html,
