@@ -1,0 +1,14 @@
+plugin.tx_seo {
+   config {
+      xmlSitemap {
+         sitemaps {
+            pages {
+               config {
+                  excludedDoktypes := addToList(601,602)
+               }
+            }
+         }
+      }
+   }
+}
+

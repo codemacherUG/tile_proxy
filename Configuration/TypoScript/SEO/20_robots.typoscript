@@ -1,0 +1,5 @@
+[traverse(page, "doktype") == 601 || traverse(page, "doktype") == 602]
+page.meta {
+  robots = noindex,nofollow
+}
+[END]
