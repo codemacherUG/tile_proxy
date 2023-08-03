@@ -45,6 +45,3 @@ already contain a TypoScript template record. Switch to view
 Switch to tab :guilabel:`Includes` and add the following templates from the list
 to the right: :guilabel:`Tile Proxy (tile_proxy)`.
 
-Read more about possible configurations via TypoScript in the
-:ref:`Reference <typoscript>` section.
-
