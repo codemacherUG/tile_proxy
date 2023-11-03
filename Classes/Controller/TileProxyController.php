@@ -166,7 +166,7 @@ class TileProxyController extends ProxyController
     return $this->createResponse($this->loadTile($fullUrl), $cacheTileFile);
   }
 
-  private function loadTile($tileURL): string
+  private function loadTile($tileURL): ?string
   {
 
     $ch = curl_init($tileURL);
@@ -183,7 +183,7 @@ class TileProxyController extends ProxyController
     if ($header['http_code'] == "200") {
       return $data;
     } else {
-      return false;
+      return null;
     }
   }
 
