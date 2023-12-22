@@ -54,6 +54,11 @@ Cache all tiles if the zoom is less than (ignore bounding box)
 All tiles with a zoom level >= this will cached.
 A zoom level 6 requires about 20MB, but beware, the required size increases exponentially.
 
+Do not caching the tile if the zoom is greater than (ignore bounding box)
+~~~~~~~~~~
+
+All tiles with a zoom level > this will not cached.
+
 
 Caching Time (in s) for each tile
 ~~~~~~~~~~

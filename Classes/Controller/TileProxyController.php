@@ -29,7 +29,7 @@ class TileProxyController extends ProxyController
     private readonly RequestFactory $requestFactory
   ) {
     parent::__construct();
-    $this->cacheDir = Environment::getVarPath() . '/tileproxy/cache';
+    $this->cacheDir = Environment::getVarPath() . Constants::CACHE_DIR;
 
     $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class);
 
@@ -112,6 +112,9 @@ class TileProxyController extends ProxyController
     $cachingUntilZoomStr = array_key_exists('cachingUntilZoom', $flexSettings) ? $flexSettings['cachingUntilZoom'] : 6;
     $cachingUntilZoom = intval($flexSettings['cachingUntilZoom'] ?? $cachingUntilZoomStr);
 
+    $maxCachingZoomStr = array_key_exists('maxCachingZoom', $flexSettings) ? $flexSettings['maxCachingZoom'] : 18;
+    $maxCachingZoom = intval($flexSettings['maxCachingZoom'] ?? $maxCachingZoomStr);
+
     $s = $parms['s'];
     $x = intval($parms['x']);
     $y = intval($parms['y']);
@@ -130,6 +133,12 @@ class TileProxyController extends ProxyController
     if (empty($fullUrl)) { // can't be happen
       return $this->createErrorResponse(Constants::ERROR_INVALID_PROVIDER);
     }
+    if ($z > $maxCachingZoom) {
+      if ($passthrough > 0) {
+        return $this->passThrough($fullUrl, $cacheTime);
+      }
+      return $this->createResponseByFilename($this->emptyTilePath, $cacheTime);
+    }
 
     $cacheTileFile = "";
     if ($z > $cachingUntilZoom && !$this->isInBoundingBox($bbox, $z, $x, $y)) {
@@ -137,29 +146,31 @@ class TileProxyController extends ProxyController
         return $this->passThrough($fullUrl, $cacheTime);
       }
       return $this->createResponseByFilename($this->emptyTilePath, $cacheTime);
+    }
+
+    $cacheTileFile = $this->cacheDir . "/$provider/$z/$x/$y.png";
+
+    $isChachValid = true;
+    $folderSize = FolderUtil::getFolderInfo($this->cacheDir)["size"];
+    if (!file_exists($cacheTileFile)) {
+      if ($folderSize > $this->maxTileFileCacheSize) {
+        return $this->passThrough($fullUrl, $cacheTime);
+      }
+      $isChachValid = $this->loadTileAndCacheIt($fullUrl, $cacheTileFile);
     } else {
-
-      $cacheTileFile = $this->cacheDir . "/$provider/$z/$x/$y.png";
-
-      $isChachValid = true;
-      if (!file_exists($cacheTileFile)) {
-        if (FolderUtil::calcSize($this->cacheDir) > $this->maxTileFileCacheSize) {
+      $fileAge = time() - filemtime($cacheTileFile);
+      if ($fileAge > $cacheTime) {
+       
+        if ($folderSize > $this->maxTileFileCacheSize) {
           return $this->passThrough($fullUrl, $cacheTime);
         }
         $isChachValid = $this->loadTileAndCacheIt($fullUrl, $cacheTileFile);
-      } else {
-        $fileAge = time() - filemtime($cacheTileFile);
-        if ($fileAge > $cacheTime) {
-          if (FolderUtil::calcSize($this->cacheDir) > $this->maxTileFileCacheSize) {
-            return $this->passThrough($fullUrl, $cacheTime);
-          }
-          $isChachValid = $this->loadTileAndCacheIt($fullUrl, $cacheTileFile);
-        }
-      }
-      if (!$isChachValid) {
-        $cacheTileFile = $this->errorTileUrl;
       }
     }
+    if (!$isChachValid) {
+      $cacheTileFile = $this->errorTileUrl;
+    }
+
 
     return $this->createResponseByFilename($cacheTileFile, $cacheTime);
   }
@@ -173,11 +184,9 @@ class TileProxyController extends ProxyController
   {
     $additionalOptions = [
       'headers' => [
-        'Cache-Control' => 'no-cache',
         'User-Agent' => Constants::REQUEST_USER_AGENT,
       ],
-      'allow_redirects' => true,
-      'stream' => true
+      'allow_redirects' => true
     ];
 
     $response = $this->requestFactory->request(

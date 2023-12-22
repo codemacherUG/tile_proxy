@@ -6,12 +6,33 @@ namespace Codemacher\TileProxy\Utils;
 class FolderUtil
 {
 
-  public static function calcSize(string $dir) : int
+  public static function formatFilesize($bytes): string
+  {
+    if ($bytes == 0)
+      return "0.00 B";
+    $s = array('B', 'KB', 'MB', 'GB', 'TB', 'PB');
+    $e = floor(log($bytes, 1024));
+    return round($bytes / pow(1024, $e), 2) . $s[$e];
+  }
+
+  public static function getFolderInfo(string $dir): array
   {
     $size = 0;
-    foreach (glob(rtrim($dir, '/') . '/*', GLOB_NOSORT) as $each) {
-      $size += is_file($each) ? filesize($each) : FolderUtil::calcSize($each);
+    $files = 0;
+    foreach (glob(rtrim($dir, '/') . '/*', GLOB_NOSORT) as $entry) {
+      $info = FolderUtil::getFolderInfo($entry);
+      if (is_file($entry)) {
+        $size += filesize($entry);
+        ++$files;
+      } else {
+        $info = FolderUtil::getFolderInfo($entry);
+        $files += $info["files"];
+        $size += $info["size"];
+      }
     }
-    return $size;
+    return [
+      "size" => $size,
+      "files" => $files
+    ];
   }
 }
