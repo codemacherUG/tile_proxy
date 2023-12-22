@@ -23,7 +23,7 @@
 				<source>Cache all tiles if the zoom is less or equal than (ignore bounding box)</source>
 			</trans-unit>
 			<trans-unit id="tx_tileproxy_flexform.settings.maxCachingZoom">
-				<source>Do not caching the tile if the zoom is greater than (ignore bounding box)</source>
+				<source>Perform no caching the tile if the zoom is greater than (ignore bounding box)</source>
 			</trans-unit>	
 			<trans-unit id="tx_tileproxy_flexform.settings.passthrough">
 				<source>Pass tile outside of the bounding box</source>
