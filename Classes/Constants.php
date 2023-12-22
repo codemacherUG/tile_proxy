@@ -13,5 +13,5 @@ class Constants {
     const ERROR_INVALID_ANSWER = 1005;
     const ERROR_INVALID_APITYPE = 1006;
 
-    const CURL_USER_AGENT = 'Tile-Proxy-PHP/1.1';
+    const REQUEST_USER_AGENT = 'Tile-Proxy-PHP/1.1';
 }

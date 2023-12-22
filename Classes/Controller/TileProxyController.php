@@ -12,6 +12,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Http\RequestFactory;
 
 use Codemacher\TileProxy\LatLngToTile;
 use Codemacher\TileProxy\Constants;
@@ -24,8 +25,9 @@ class TileProxyController extends ProxyController
   private string $cacheDir;
   private int $maxTileFileCacheSize;
 
-  public function __construct()
-  {
+  public function __construct(
+    private readonly RequestFactory $requestFactory
+  ) {
     parent::__construct();
     $this->cacheDir = Environment::getVarPath() . '/tileproxy/cache';
 
@@ -33,11 +35,11 @@ class TileProxyController extends ProxyController
 
     $this->errorTileUrl = $extConf->get('tile_proxy', 'errorTilePath');
     if (empty($this->errorTileUrl)) {
-      $this->errorTileUrl  = ExtensionManagementUtility::extPath('tile_proxy') . "Resources/Public/Images/tile-error.png";
+      $this->errorTileUrl = ExtensionManagementUtility::extPath('tile_proxy') . "Resources/Public/Images/tile-error.png";
     }
     $this->emptyTilePath = $extConf->get('tile_proxy', 'emptyTilePath');
     if (empty($this->emptyTilePath)) {
-      $this->emptyTilePath  = ExtensionManagementUtility::extPath('tile_proxy') . "Resources/Public/Images/tile-empty.png";
+      $this->emptyTilePath = ExtensionManagementUtility::extPath('tile_proxy') . "Resources/Public/Images/tile-empty.png";
     }
 
     $maxTileFileCacheSizeMbStr = $extConf->get('tile_proxy', 'maxTileFileCacheSizeMb');
@@ -50,11 +52,12 @@ class TileProxyController extends ProxyController
 
   protected function isInBoundingBox(array $bbox, int $z, int $x, int $y): bool
   {
-    if (count($bbox) != 4) return true;
-    $minTileX     = LatLngToTile::lngToTileX($bbox[0], $z);
-    $maxTileX     = LatLngToTile::lngToTileX($bbox[2], $z);
-    $minTileY     = LatLngToTile::latToTileY($bbox[3], $z);
-    $maxTileY     = LatLngToTile::latToTileY($bbox[1], $z);
+    if (count($bbox) != 4)
+      return true;
+    $minTileX = LatLngToTile::lngToTileX($bbox[0], $z);
+    $maxTileX = LatLngToTile::lngToTileX($bbox[2], $z);
+    $minTileY = LatLngToTile::latToTileY($bbox[3], $z);
+    $maxTileY = LatLngToTile::latToTileY($bbox[1], $z);
     return !(!LatLngToTile::inRange($x, $minTileX, $maxTileX) || !LatLngToTile::inRange($y, $minTileY, $maxTileY));
   }
 
@@ -85,12 +88,13 @@ class TileProxyController extends ProxyController
       case "osm":
         return "https://$s.tile.openstreetmap.org/$z/$x/$y.png";
     }
-    return null;
+    return "";
   }
 
 
   public function process(array $flexSettings, ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
   {
+
 
     if (!$this->parametersComplet($request)) {
       return $this->createErrorResponse(Constants::ERROR_INVALID_PARAMETERS);
@@ -99,15 +103,14 @@ class TileProxyController extends ProxyController
     $parms = $request->getQueryParams();
     $bboxStr = array_key_exists('bbox', $flexSettings) ? $flexSettings['bbox'] : '11.86,51.41,12.07,51.55';
     $bbox = explode(',', $bboxStr);
-    $cacheTimeStr =  array_key_exists('cacheTime', $flexSettings) ? $flexSettings['cacheTime'] : '31536000';
-    $cacheTime = intval($flexSettings['cacheTime'] ??  $cacheTimeStr);
+    $cacheTimeStr = array_key_exists('cacheTime', $flexSettings) ? $flexSettings['cacheTime'] : '31536000';
+    $cacheTime = intval($flexSettings['cacheTime'] ?? $cacheTimeStr);
 
-    $passthroughStr =  array_key_exists('passthrough', $flexSettings) ? $flexSettings['passthrough'] : 0;
-    $passthrough = intval($flexSettings['passthrough'] ??  $passthroughStr);
+    $passthroughStr = array_key_exists('passthrough', $flexSettings) ? $flexSettings['passthrough'] : 0;
+    $passthrough = intval($flexSettings['passthrough'] ?? $passthroughStr);
 
-    $cachingUntilZoomStr =  array_key_exists('cachingUntilZoom', $flexSettings) ? $flexSettings['cachingUntilZoom'] : 6;
-    $cachingUntilZoom = intval($flexSettings['cachingUntilZoom'] ??  $cachingUntilZoomStr);
-
+    $cachingUntilZoomStr = array_key_exists('cachingUntilZoom', $flexSettings) ? $flexSettings['cachingUntilZoom'] : 6;
+    $cachingUntilZoom = intval($flexSettings['cachingUntilZoom'] ?? $cachingUntilZoomStr);
 
     $s = $parms['s'];
     $x = intval($parms['x']);
@@ -168,23 +171,29 @@ class TileProxyController extends ProxyController
 
   private function loadTile($tileURL): ?string
   {
+    $additionalOptions = [
+      'headers' => [
+        'Cache-Control' => 'no-cache',
+        'User-Agent' => Constants::REQUEST_USER_AGENT,
+      ],
+      'allow_redirects' => true,
+      'stream' => true
+    ];
 
-    $ch = curl_init($tileURL);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_USERAGENT, Constants::CURL_USER_AGENT);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    $response = $this->requestFactory->request(
+      $tileURL,
+      'GET',
+      $additionalOptions
+    );
 
-    $data = curl_exec($ch);
-    $header = curl_getinfo($ch);
-    curl_close($ch);
-    if ($header['http_code'] == "200") {
-      return $data;
-    } else {
-      return null;
+    if ($response->getStatusCode() === 200) {
+      $contentTypes = $response->getHeader('Content-Type');
+      if (count($contentTypes) > 0 && $contentTypes[0] === 'image/png') {
+        return $response->getBody()->getContents();
+      }
     }
+    return null;
+
   }
 
   private function loadTileAndCacheIt($tileURL, $cacheTileFile)

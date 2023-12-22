@@ -6,3 +6,9 @@ services:
 
   Codemacher\TileProxy\:
     resource: '../Classes/*'
+
+  Codemacher\TileProxy\Controller\TileProxyController:
+    public: true
+
+  Codemacher\TileProxy\Controller\NominatimProxyController:
+    public: true    
