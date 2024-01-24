@@ -56,6 +56,7 @@ class TileProxyMiddleware implements MiddlewareInterface
         }
 
         $flexform = array_key_exists('tx_tileproxy_flexform', $pageRecord) ? $pageRecord['tx_tileproxy_flexform'] : "";
+        /** @var FlexFormService $ffs */
         $ffs = GeneralUtility::makeInstance(FlexFormService::class);
         $flex = $ffs->convertFlexFormContentToArray($flexform);
         $flexSettings = $flex != null && array_key_exists("settings", $flex) ? $flex["settings"] : [];

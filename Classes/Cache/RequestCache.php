@@ -14,10 +14,14 @@ class RequestCache
 
     public function __construct()
     {
+        /** @phpstan-ignore-next-line */
         $this->repo = GeneralUtility::makeInstance(RequestCacheRecordRepository::class);
     }
 
-    public function getData(string $url): mixed
+    /**
+     * @return mixed
+     */
+    public function getData(string $url)
     {
         $url_hash = md5($url);
         $record = $this->repo->findByHash($url_hash);

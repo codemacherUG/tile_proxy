@@ -21,8 +21,10 @@ abstract class BaseRecordRepository
      */
     protected function getQueryBuilder(bool $removeRestrictions = true): QueryBuilder
     {
+        /** @var ConnectionPool $connectionPool */
+        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
         /* @var QueryBuilder $queryBuilder */
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->table);
+        $queryBuilder = $connectionPool->getQueryBuilderForTable($this->table);
         if ($removeRestrictions) {
             $queryBuilder->getRestrictions()
               ->removeAll();
@@ -58,6 +60,7 @@ abstract class BaseRecordRepository
 
     public static function getExceptionTime(): int
     {
+        /** @var Context $context */
         $context = GeneralUtility::makeInstance(Context::class);
         return (int) $context->getPropertyFromAspect('date', 'timestamp');
     }

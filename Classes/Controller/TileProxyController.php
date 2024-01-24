@@ -25,12 +25,16 @@ class TileProxyController extends ProxyController
     private string $cacheDir;
     private int $maxTileFileCacheSize;
 
+    private RequestFactory $requestFactory;
+
     public function __construct(
-        private readonly RequestFactory $requestFactory
+        RequestFactory $requestFactory
     ) {
         parent::__construct();
+        $this->requestFactory = $requestFactory;
         $this->cacheDir = Environment::getVarPath() . Constants::CACHE_DIR;
 
+        /** @var ExtensionConfiguration $extConf */
         $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class);
 
         $this->errorTileUrl = $extConf->get('tile_proxy', 'errorTilePath');
