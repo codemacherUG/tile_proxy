@@ -9,57 +9,56 @@ use TYPO3\CMS\Core\Context\Context;
 
 abstract class BaseRecordRepository
 {
-  /**
-   * @var string
-   */
-  protected string $table = '';
+    /**
+     * @var string
+     */
+    protected string $table = '';
 
-  /**
-   * Returns QueryBuilder
-   *
-   * @return QueryBuilder
-   */
-  protected function getQueryBuilder(bool $removeRestrictions = true): QueryBuilder
-  {
-    /* @var QueryBuilder $queryBuilder */
-    $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->table);
-    if ($removeRestrictions) {
-      $queryBuilder->getRestrictions()
-        ->removeAll();
-    }
-    return $queryBuilder;
-  }
-
-  /**
-   * Updates a row
-   *
-   * @param array $uid
-   * @param array $data
-   * @throws DBALException|\Doctrine\DBAL\DBALException
-   */
-  public function update(array $uids, array $data): void
-  {
-    if (count($uids) == 0) {
-      return;
+    /**
+     * Returns QueryBuilder
+     *
+     * @return QueryBuilder
+     */
+    protected function getQueryBuilder(bool $removeRestrictions = true): QueryBuilder
+    {
+        /* @var QueryBuilder $queryBuilder */
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->table);
+        if ($removeRestrictions) {
+            $queryBuilder->getRestrictions()
+              ->removeAll();
+        }
+        return $queryBuilder;
     }
 
-    $queryBuilder = $this->getQueryBuilder();
-    $queryBuilder
-      ->update($this->table)
-      ->where(
-        $queryBuilder->expr()->in('uid', $uids)
-      );
+    /**
+     * Updates a row
+     *
+     * @param array $uids
+     * @param array $data
+     */
+    public function update(array $uids, array $data): void
+    {
+        if (count($uids) == 0) {
+            return;
+        }
 
-    foreach ($data as $column => $value) {
-      $queryBuilder->set($column, $value);
+        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder
+          ->update($this->table)
+          ->where(
+              $queryBuilder->expr()->in('uid', $uids)
+          );
+
+        foreach ($data as $column => $value) {
+            $queryBuilder->set($column, $value);
+        }
+
+        $queryBuilder->execute();
     }
 
-    $queryBuilder->execute();
-  }
-
-  public static function getExceptionTime(): int
-  {
-    $context = GeneralUtility::makeInstance(Context::class);
-    return (int)$context->getPropertyFromAspect('date', 'timestamp');
-  }
+    public static function getExceptionTime(): int
+    {
+        $context = GeneralUtility::makeInstance(Context::class);
+        return (int) $context->getPropertyFromAspect('date', 'timestamp');
+    }
 }

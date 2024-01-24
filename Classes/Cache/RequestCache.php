@@ -10,33 +10,41 @@ use Codemacher\TileProxy\Records\RequestCacheRecordRepository;
 
 class RequestCache
 {
+    private RequestCacheRecordRepository $repo;
 
-  private RequestCacheRecordRepository $repo;
-
-  public function __construct()
-  {
-    $this->repo = GeneralUtility::makeInstance(RequestCacheRecordRepository::class);
-  }
-
-  public function getData(string $url) : ?array {
-    $url_hash = md5($url);
-    $record = $this->repo->findByHash($url_hash);
-    if($record) {
-      return unserialize(gzuncompress($record['data']));
+    public function __construct()
+    {
+        $this->repo = GeneralUtility::makeInstance(RequestCacheRecordRepository::class);
     }
-    return null;
-  }
 
-  public function setData(string $url, array $contentInfo, int $maxDbRecordsToCache) : void {
-  
-    $url_hash = md5($url);
-    if($this->repo->count() < $maxDbRecordsToCache) {
-      $this->repo->insert($url_hash, gzcompress(serialize($contentInfo)));
-    } 
-  }
+    public function getData(string $url): mixed
+    {
+        $url_hash = md5($url);
+        $record = $this->repo->findByHash($url_hash);
+        if($record) {
+            $seriData = gzuncompress($record['data']);
+            if(!empty($seriData)) {
+                return unserialize($seriData);
+            }
+        }
+        return null;
+    }
 
-  public function cleanUp(int $cacheTime) : void {
-    $minCacheTime = time() - $cacheTime;
-    $this->repo->deleteRecordsOlderThan($minCacheTime);
-  }
+    public function setData(string $url, array $contentInfo, int $maxDbRecordsToCache): void
+    {
+
+        $url_hash = md5($url);
+        if($this->repo->count() < $maxDbRecordsToCache) {
+            $compData = gzcompress(serialize($contentInfo));
+            if(!empty($compData)) {
+                $this->repo->insert($url_hash, $compData);
+            }
+        }
+    }
+
+    public function cleanUp(int $cacheTime): void
+    {
+        $minCacheTime = time() - $cacheTime;
+        $this->repo->deleteRecordsOlderThan($minCacheTime);
+    }
 }

@@ -11,18 +11,17 @@ use Codemacher\TileProxy\Records\RequestCacheRecordRepository;
 
 class CleanUpDbCacheBackend extends NullBackend
 {
+    protected string $cacheType = '';
 
-  protected string $cacheType = '';
+    public function setCacheType(string $cacheType): void
+    {
+        $this->cacheType = $cacheType;
+    }
 
-  public function setCacheType(string $cacheType): void
-  {
-    $this->cacheType = $cacheType;
-  }
-
-  public function flush(): void
-  {
-    /** @var RequestCacheRecordRepository $repo  */
-    $repo = GeneralUtility::makeInstance(RequestCacheRecordRepository::class);
-    $repo->truncate();
-  }
+    public function flush(): void
+    {
+        /** @var RequestCacheRecordRepository $repo  */
+        $repo = GeneralUtility::makeInstance(RequestCacheRecordRepository::class);
+        $repo->truncate();
+    }
 }

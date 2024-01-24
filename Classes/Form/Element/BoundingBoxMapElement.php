@@ -9,7 +9,6 @@ use TYPO3\CMS\Core\Information\Typo3Version;
 
 class BoundingBoxMapElement extends MapElement
 {
-
     protected string $mapClassName = "bboxmap";
 
     protected function createAttributes(array $parameterArray): array
@@ -20,7 +19,7 @@ class BoundingBoxMapElement extends MapElement
         return $attributes;
     }
 
-    protected function enrichResultArray($resultArray): array
+    protected function enrichResultArray(array $resultArray): array
     {
         $resultArray = parent::enrichResultArray($resultArray);
         $typo3Version = new Typo3Version();

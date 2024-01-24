@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Codemacher\TileProxy\Middleware;
 
-
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -15,6 +14,7 @@ use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Http\JsonResponse;
 
 use Codemacher\TileProxy\Constants;
+use Codemacher\TileProxy\Controller\ProxyController;
 use Codemacher\TileProxy\Controller\TileProxyController;
 use Codemacher\TileProxy\Controller\NominatimProxyController;
 
@@ -38,24 +38,30 @@ class TileProxyMiddleware implements MiddlewareInterface
 
     protected function performTileProxy(ServerRequestInterface $request, RequestHandlerInterface $handler, array $pageRecord): ResponseInterface
     {
-        return $this->performProxy(TileProxyController::class, $request,$handler, $pageRecord);
+        return $this->performProxy(TileProxyController::class, $request, $handler, $pageRecord);
     }
 
     protected function performNominatimProxy(ServerRequestInterface $request, RequestHandlerInterface $handler, array $pageRecord): ResponseInterface
     {
-        return $this->performProxy(NominatimProxyController::class, $request,$handler, $pageRecord);
+        return $this->performProxy(NominatimProxyController::class, $request, $handler, $pageRecord);
     }
 
+    /**
+     * @param class-string<ProxyController> $classname
+     */
     protected function performProxy(string $classname, ServerRequestInterface $request, RequestHandlerInterface $handler, array $pageRecord): ResponseInterface
     {
-        if (!$this->fulfilsHostRestrictions()) return new JsonResponse(['error' => Constants::ERROR_INVALID_HOST], 403);
-        
+        if (!$this->fulfilsHostRestrictions()) {
+            return new JsonResponse(['error' => Constants::ERROR_INVALID_HOST], 403);
+        }
+
         $flexform = array_key_exists('tx_tileproxy_flexform', $pageRecord) ? $pageRecord['tx_tileproxy_flexform'] : "";
         $ffs = GeneralUtility::makeInstance(FlexFormService::class);
         $flex = $ffs->convertFlexFormContentToArray($flexform);
         $flexSettings = $flex != null && array_key_exists("settings", $flex) ? $flex["settings"] : [];
 
-        $proxy =  GeneralUtility::makeInstance($classname);
+        /** @var ProxyController $proxy */
+        $proxy = GeneralUtility::makeInstance($classname);
         return $proxy->process($flexSettings, $request, $handler);
     }
 

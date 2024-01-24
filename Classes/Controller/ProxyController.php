@@ -13,23 +13,22 @@ use TYPO3\CMS\Core\Http\JsonResponse;
 
 abstract class ProxyController
 {
-
-  protected StreamFactory $streamFactory;
-  const VALID_TYPES = ["osm"];
-  
-
-  public function __construct()
-  {
-    $this->streamFactory = GeneralUtility::makeInstance(StreamFactory::class);
-  }
+    protected StreamFactory $streamFactory;
+    public const VALID_TYPES = ["osm"];
 
 
-  protected function createErrorResponse(int $code): ResponseInterface
-  {
-    return new JsonResponse(['error' => $code], 403);
-  }
+    public function __construct()
+    {
+        $this->streamFactory = GeneralUtility::makeInstance(StreamFactory::class);
+    }
 
-  
-  public abstract function process(array $flexSettings, ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface;
+
+    protected function createErrorResponse(int $code): ResponseInterface
+    {
+        return new JsonResponse(['error' => $code], 403);
+    }
+
+
+    abstract public function process(array $flexSettings, ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface;
 
 }
