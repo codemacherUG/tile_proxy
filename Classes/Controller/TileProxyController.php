@@ -81,9 +81,10 @@ class TileProxyController extends ProxyController
 
     protected function createResponse(string $content, int $cacheHeaderTime): ResponseInterface
     {
+        
         return (new Response())
-          ->withHeader('content-type', 'image/png')
-          ->withHeader('cache-control', "public, max-age=$cacheHeaderTime, s-maxage=$cacheHeaderTime")
+          ->withHeader('Content-Type', 'image/png')
+          ->withHeader('Cache-Control', "public, max-age=$cacheHeaderTime, s-maxage=$cacheHeaderTime")
           ->withBody($this->streamFactory->createStream($content));
     }
 
