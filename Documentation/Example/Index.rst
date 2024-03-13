@@ -42,6 +42,7 @@ OpenLayers
         attributions: '&#169; ' +
             '<a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> ' +
             'contributors.',
+        crossOrigin: 'anonymous',
         urls: [
             '/tile-proxy/?provider=osm&z={z}&x={x}&y={y}&s=a',
             '/tile-proxy/?provider=osm&z={z}&x={x}&y={y}&s=b',

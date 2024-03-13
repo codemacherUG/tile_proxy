@@ -66,20 +66,22 @@ class TileProxyMiddleware implements MiddlewareInterface
         return $proxy->process($flexSettings, $request, $handler);
     }
 
+
+    protected function getHostname(string $fullhost): ?string
+    {
+        if(preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $fullhost, $regs)) {
+            return $regs['domain'];
+        }
+        return null;
+    }
+    
     protected function fulfilsHostRestrictions(): bool
     {
         $referrer = @$_SERVER['HTTP_REFERER'];
         $host = @$_SERVER['HTTP_HOST'];
-
-        $valids = ["://$host", "://www.$host", "://localhost"];
-
-        if (null != $referrer) {
-            foreach ($valids as $valid) {
-                if (strpos($referrer, $valid) >= 1) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        $referrerPieces = parse_url($referrer);
+        $referrerDomain = $this->getHostname($referrerPieces["host"]);
+        $hostDomain = $this->getHostname($host);
+        return $referrerDomain == $hostDomain;
     }
 }

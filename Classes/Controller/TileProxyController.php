@@ -85,6 +85,7 @@ class TileProxyController extends ProxyController
         return (new Response())
           ->withHeader('Content-Type', 'image/png')
           ->withHeader('Cache-Control', "public, max-age=$cacheHeaderTime, s-maxage=$cacheHeaderTime")
+          ->withHeader('Access-Control-Allow-Origin', "*")
           ->withBody($this->streamFactory->createStream($content));
     }
 
