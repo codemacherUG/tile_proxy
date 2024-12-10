@@ -14,16 +14,7 @@ class CenterZoomMapElement extends MapElement
     protected function enrichResultArray(array $resultArray): array
     {
         $resultArray = parent::enrichResultArray($resultArray);
-        $typo3Version = new Typo3Version();
-        if ($typo3Version->getMajorVersion() < 12) {
-            $resultArray['requireJsModules'][] = JavaScriptModuleInstruction::forRequireJS(
-                'TYPO3/CMS/TileProxy/CenterZoomMapElement'
-            );
-        } else {
-            /* @phpstan-ignore-next-line */
-            $resultArray['javaScriptModules'][] = JavaScriptModuleInstruction::create('@codemacher/tile_proxy/CenterZoomMapElement.js');
-        }
-
+        $resultArray['javaScriptModules'][] = JavaScriptModuleInstruction::create('@codemacher/tile_proxy/CenterZoomMapElement.js');
         $resultArray['stylesheetFiles'][] = 'EXT:tile_proxy/Resources/Public/Css/MapElement.css';
         return $resultArray;
     }

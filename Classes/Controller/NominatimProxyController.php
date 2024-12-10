@@ -21,13 +21,12 @@ class NominatimProxyController extends ProxyController
     protected int $maxDbRecordsToCache;
     protected RequestCache $requestCache;
 
-    private RequestFactory $requestFactory;
     public function __construct(
-        RequestFactory $requestFactory
+        private RequestFactory $requestFactory
     ) {
         parent::__construct();
         $this->requestFactory = $requestFactory;
-        /** @phpstan-ignore-next-line */
+
         $this->requestCache = GeneralUtility::makeInstance((RequestCache::class));
         /** @var ExtensionConfiguration $extConf */
         $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class);
