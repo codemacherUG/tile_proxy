@@ -48,7 +48,7 @@ use Codemacher\TileProxy\Constants;
               'ds' => [
                 Constants::DOKTYPE_TILE_PROXY => 'FILE:EXT:tile_proxy/Configuration/FlexForms/TileProxy.xml',
                 Constants::DOKTYPE_NOMINATIM_PROXY => 'FILE:EXT:tile_proxy/Configuration/FlexForms/NominatimProxy.xml',
-               'default' => 'FILE:EXT:tile_proxy/Configuration/FlexForms/Empty.xml',
+               'default' => '',
               ],
             ],
           ],
