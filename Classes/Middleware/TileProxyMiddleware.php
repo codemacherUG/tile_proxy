@@ -81,7 +81,7 @@ class TileProxyMiddleware implements MiddlewareInterface
         $host = @$_SERVER['HTTP_HOST'];
         if(empty($referrer) || empty($host)) return false;
         $referrerPieces = parse_url($referrer);
-        $referrerDomain = $this->getHostname($referrerPieces["host"]);
+        $referrerDomain = $this->getHostname($referrerPieces["host"] ?? '');
         $hostDomain = $this->getHostname($host);
         return $referrerDomain == $hostDomain;
     }

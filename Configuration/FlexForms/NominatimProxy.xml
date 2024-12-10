@@ -6,15 +6,13 @@
                 <type>array</type>
                 <el>
                     <settings.cacheTime>
-                        <TCEforms>
-                            <label>
-                                LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.requestCacheTime</label>
-                            <config>
-                                <type>input</type>
-                                <eval>trim,int</eval>
-                                <default>1209600</default>
-                            </config>
-                        </TCEforms>
+                        <label>
+                            LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.requestCacheTime</label>
+                        <config>
+                            <type>input</type>
+                            <eval>trim,int</eval>
+                            <default>1209600</default>
+                        </config>
                     </settings.cacheTime>
                 </el>
             </ROOT>

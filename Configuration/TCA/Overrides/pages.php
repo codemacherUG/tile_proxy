@@ -13,12 +13,11 @@ use Codemacher\TileProxy\Constants;
         $table,
         'doktype',
         [
-        'LLL:EXT:' . $extKey . '/Resources/Private/Language/locallang.xlf:doktype_tile_proxy',
-        Constants::DOKTYPE_TILE_PROXY,
-        'EXT:' . $extKey . '/Resources/Public/Icons/doktype-tileproxy.svg',
-        'special'
-
-    ],
+          'LLL:EXT:' . $extKey . '/Resources/Private/Language/locallang.xlf:doktype_tile_proxy',
+          Constants::DOKTYPE_TILE_PROXY,
+          'EXT:' . $extKey . '/Resources/Public/Icons/doktype-tileproxy.svg',
+          'special'
+        ],
         '1',
         'after'
     );
@@ -27,11 +26,11 @@ use Codemacher\TileProxy\Constants;
         $table,
         'doktype',
         [
-        'LLL:EXT:' . $extKey . '/Resources/Private/Language/locallang.xlf:doktype_nominatim_proxy',
-        Constants::DOKTYPE_NOMINATIM_PROXY,
-        'EXT:' . $extKey . '/Resources/Public/Icons/doktype-nominatimproxy.svg',
-        'special'
-    ],
+          'LLL:EXT:' . $extKey . '/Resources/Private/Language/locallang.xlf:doktype_nominatim_proxy',
+          Constants::DOKTYPE_NOMINATIM_PROXY,
+          'EXT:' . $extKey . '/Resources/Public/Icons/doktype-nominatimproxy.svg',
+          'special'
+        ],
         '1',
         'after'
     );
