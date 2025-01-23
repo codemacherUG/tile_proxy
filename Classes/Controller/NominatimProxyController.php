@@ -42,6 +42,7 @@ class NominatimProxyController extends ProxyController
     {
         return (new Response())
           ->withHeader('content-type', $contentInfo['content-type'])
+          ->withHeader('X-Robots-Tag', 'noindex')
           ->withBody($this->streamFactory->createStream($contentInfo['data']));
     }
 
