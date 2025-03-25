@@ -16,11 +16,12 @@ var CenterZoomMapElement;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-var Map_js_1 = __webpack_require__(2390);
+var Map_js_1 = __webpack_require__(5336);
 var OSM_js_1 = __webpack_require__(560);
 var Tile_js_1 = __webpack_require__(3504);
 var View_js_1 = __webpack_require__(1765);
 var proj_1 = __webpack_require__(2796);
+var defaults_1 = __webpack_require__(4307);
 var interaction_1 = __webpack_require__(1892);
 var CenterZoomMap = /** @class */ (function () {
     function CenterZoomMap(parent, centerZoomString, onChangeCallback) {
@@ -55,7 +56,7 @@ var CenterZoomMap = /** @class */ (function () {
     CenterZoomMap.prototype.buildCenterZoomString = function () {
         var center = (0, proj_1.toLonLat)(this.map.getView().getCenter());
         var zoom = this.map.getView().getZoom();
-        var resutlArray = [center[0], center[1], Math.round(zoom)];
+        var resutlArray = [center[0], center[1], zoom];
         return resutlArray.join(',');
     };
     CenterZoomMap.prototype.buildMap = function () {
@@ -65,7 +66,15 @@ var CenterZoomMap = /** @class */ (function () {
                     source: new OSM_js_1.default(),
                 }),
             ],
-            interactions: (0, interaction_1.defaults)({ mouseWheelZoom: false }),
+            controls: (0, defaults_1.defaults)({
+                zoom: true,
+                zoomOptions: {
+                    delta: .1
+                },
+            }),
+            interactions: (0, interaction_1.defaults)({
+                mouseWheelZoom: false
+            }),
             target: this.parent.querySelector('.map'),
             view: new View_js_1.default({
                 zoom: 10,
@@ -1555,7 +1564,7 @@ function getBlankImage() {
 
 /***/ }),
 
-/***/ 2390:
+/***/ 5336:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -3283,920 +3292,12 @@ function getTilePriority(
 var View = __webpack_require__(1765);
 // EXTERNAL MODULE: ./node_modules/ol/ViewHint.js
 var ViewHint = __webpack_require__(2703);
-;// ./node_modules/ol/control/Control.js
-/**
- * @module ol/control/Control
- */
-
-
-
-
-
-
-/**
- * @typedef {Object} Options
- * @property {HTMLElement} [element] The element is the control's
- * container element. This only needs to be specified if you're developing
- * a custom control.
- * @property {function(import("../MapEvent.js").default):void} [render] Function called when
- * the control should be re-rendered. This is called in a `requestAnimationFrame`
- * callback.
- * @property {HTMLElement|string} [target] Specify a target if you want
- * the control to be rendered outside of the map's viewport.
- */
-
-/**
- * @classdesc
- * A control is a visible widget with a DOM element in a fixed position on the
- * screen. They can involve user input (buttons), or be informational only;
- * the position is determined using CSS. By default these are placed in the
- * container with CSS class name `ol-overlaycontainer-stopevent`, but can use
- * any outside DOM element.
- *
- * This is the base class for controls. You can use it for simple custom
- * controls by creating the element with listeners, creating an instance:
- * ```js
- * const myControl = new Control({element: myElement});
- * ```
- * and then adding this to the map.
- *
- * The main advantage of having this as a control rather than a simple separate
- * DOM element is that preventing propagation is handled for you. Controls
- * will also be objects in a {@link module:ol/Collection~Collection}, so you can use their methods.
- *
- * You can also extend this base for your own control class. See
- * examples/custom-controls for an example of how to do this.
- *
- * @api
- */
-class Control extends ol_Object/* default */.A {
-  /**
-   * @param {Options} options Control options.
-   */
-  constructor(options) {
-    super();
-
-    const element = options.element;
-    if (element && !options.target && !element.style.pointerEvents) {
-      element.style.pointerEvents = 'auto';
-    }
-
-    /**
-     * @protected
-     * @type {HTMLElement}
-     */
-    this.element = element ? element : null;
-
-    /**
-     * @private
-     * @type {HTMLElement}
-     */
-    this.target_ = null;
-
-    /**
-     * @private
-     * @type {import("../Map.js").default|null}
-     */
-    this.map_ = null;
-
-    /**
-     * @protected
-     * @type {!Array<import("../events.js").EventsKey>}
-     */
-    this.listenerKeys = [];
-
-    if (options.render) {
-      this.render = options.render;
-    }
-
-    if (options.target) {
-      this.setTarget(options.target);
-    }
-  }
-
-  /**
-   * Clean up.
-   */
-  disposeInternal() {
-    (0,dom/* removeNode */.bf)(this.element);
-    super.disposeInternal();
-  }
-
-  /**
-   * Get the map associated with this control.
-   * @return {import("../Map.js").default|null} Map.
-   * @api
-   */
-  getMap() {
-    return this.map_;
-  }
-
-  /**
-   * Remove the control from its current map and attach it to the new map.
-   * Pass `null` to just remove the control from the current map.
-   * Subclasses may set up event handlers to get notified about changes to
-   * the map here.
-   * @param {import("../Map.js").default|null} map Map.
-   * @api
-   */
-  setMap(map) {
-    if (this.map_) {
-      (0,dom/* removeNode */.bf)(this.element);
-    }
-    for (let i = 0, ii = this.listenerKeys.length; i < ii; ++i) {
-      (0,events/* unlistenByKey */.JH)(this.listenerKeys[i]);
-    }
-    this.listenerKeys.length = 0;
-    this.map_ = map;
-    if (map) {
-      const target = this.target_
-        ? this.target_
-        : map.getOverlayContainerStopEvent();
-      target.appendChild(this.element);
-      if (this.render !== functions/* VOID */.tV) {
-        this.listenerKeys.push(
-          (0,events/* listen */.KT)(map, MapEventType/* default */.A.POSTRENDER, this.render, this)
-        );
-      }
-      map.render();
-    }
-  }
-
-  /**
-   * Renders the control.
-   * @param {import("../MapEvent.js").default} mapEvent Map event.
-   * @api
-   */
-  render(mapEvent) {}
-
-  /**
-   * This function is used to set a target element for the control. It has no
-   * effect if it is called after the control has been added to the map (i.e.
-   * after `setMap` is called on the control). If no `target` is set in the
-   * options passed to the control constructor and if `setTarget` is not called
-   * then the control is added to the map's overlay container.
-   * @param {HTMLElement|string} target Target.
-   * @api
-   */
-  setTarget(target) {
-    this.target_ =
-      typeof target === 'string' ? document.getElementById(target) : target;
-  }
-}
-
-/* harmony default export */ const control_Control = (Control);
-
-// EXTERNAL MODULE: ./node_modules/ol/array.js
-var array = __webpack_require__(6514);
-;// ./node_modules/ol/control/Attribution.js
-/**
- * @module ol/control/Attribution
- */
-
-
-
-
-
-
-/**
- * @typedef {Object} Options
- * @property {string} [className='ol-attribution'] CSS class name.
- * @property {HTMLElement|string} [target] Specify a target if you
- * want the control to be rendered outside of the map's
- * viewport.
- * @property {boolean} [collapsible] Specify if attributions can
- * be collapsed. If not specified, sources control this behavior with their
- * `attributionsCollapsible` setting.
- * @property {boolean} [collapsed=true] Specify if attributions should
- * be collapsed at startup.
- * @property {string} [tipLabel='Attributions'] Text label to use for the button tip.
- * @property {string|HTMLElement} [label='i'] Text label to use for the
- * collapsed attributions button.
- * Instead of text, also an element (e.g. a `span` element) can be used.
- * @property {string} [expandClassName=className + '-expand'] CSS class name for the
- * collapsed attributions button.
- * @property {string|HTMLElement} [collapseLabel='›'] Text label to use
- * for the expanded attributions button.
- * Instead of text, also an element (e.g. a `span` element) can be used.
- * @property {string} [collapseClassName=className + '-collapse'] CSS class name for the
- * expanded attributions button.
- * @property {function(import("../MapEvent.js").default):void} [render] Function called when
- * the control should be re-rendered. This is called in a `requestAnimationFrame`
- * callback.
- */
-
-/**
- * @classdesc
- * Control to show all the attributions associated with the layer sources
- * in the map. This control is one of the default controls included in maps.
- * By default it will show in the bottom right portion of the map, but this can
- * be changed by using a css selector for `.ol-attribution`.
- *
- * @api
- */
-class Attribution extends control_Control {
-  /**
-   * @param {Options} [options] Attribution options.
-   */
-  constructor(options) {
-    options = options ? options : {};
-
-    super({
-      element: document.createElement('div'),
-      render: options.render,
-      target: options.target,
-    });
-
-    /**
-     * @private
-     * @type {HTMLElement}
-     */
-    this.ulElement_ = document.createElement('ul');
-
-    /**
-     * @private
-     * @type {boolean}
-     */
-    this.collapsed_ =
-      options.collapsed !== undefined ? options.collapsed : true;
-
-    /**
-     * @private
-     * @type {boolean}
-     */
-    this.userCollapsed_ = this.collapsed_;
-
-    /**
-     * @private
-     * @type {boolean}
-     */
-    this.overrideCollapsible_ = options.collapsible !== undefined;
-
-    /**
-     * @private
-     * @type {boolean}
-     */
-    this.collapsible_ =
-      options.collapsible !== undefined ? options.collapsible : true;
-
-    if (!this.collapsible_) {
-      this.collapsed_ = false;
-    }
-
-    const className =
-      options.className !== undefined ? options.className : 'ol-attribution';
-
-    const tipLabel =
-      options.tipLabel !== undefined ? options.tipLabel : 'Attributions';
-
-    const expandClassName =
-      options.expandClassName !== undefined
-        ? options.expandClassName
-        : className + '-expand';
-
-    const collapseLabel =
-      options.collapseLabel !== undefined ? options.collapseLabel : '\u203A';
-
-    const collapseClassName =
-      options.collapseClassName !== undefined
-        ? options.collapseClassName
-        : className + '-collapse';
-
-    if (typeof collapseLabel === 'string') {
-      /**
-       * @private
-       * @type {HTMLElement}
-       */
-      this.collapseLabel_ = document.createElement('span');
-      this.collapseLabel_.textContent = collapseLabel;
-      this.collapseLabel_.className = collapseClassName;
-    } else {
-      this.collapseLabel_ = collapseLabel;
-    }
-
-    const label = options.label !== undefined ? options.label : 'i';
-
-    if (typeof label === 'string') {
-      /**
-       * @private
-       * @type {HTMLElement}
-       */
-      this.label_ = document.createElement('span');
-      this.label_.textContent = label;
-      this.label_.className = expandClassName;
-    } else {
-      this.label_ = label;
-    }
-
-    const activeLabel =
-      this.collapsible_ && !this.collapsed_ ? this.collapseLabel_ : this.label_;
-
-    /**
-     * @private
-     * @type {HTMLElement}
-     */
-    this.toggleButton_ = document.createElement('button');
-    this.toggleButton_.setAttribute('type', 'button');
-    this.toggleButton_.setAttribute('aria-expanded', String(!this.collapsed_));
-    this.toggleButton_.title = tipLabel;
-    this.toggleButton_.appendChild(activeLabel);
-
-    this.toggleButton_.addEventListener(
-      events_EventType/* default */.A.CLICK,
-      this.handleClick_.bind(this),
-      false
-    );
-
-    const cssClasses =
-      className +
-      ' ' +
-      css/* CLASS_UNSELECTABLE */.XI +
-      ' ' +
-      css/* CLASS_CONTROL */.$N +
-      (this.collapsed_ && this.collapsible_ ? ' ' + css/* CLASS_COLLAPSED */.nT : '') +
-      (this.collapsible_ ? '' : ' ol-uncollapsible');
-    const element = this.element;
-    element.className = cssClasses;
-    element.appendChild(this.toggleButton_);
-    element.appendChild(this.ulElement_);
-
-    /**
-     * A list of currently rendered resolutions.
-     * @type {Array<string>}
-     * @private
-     */
-    this.renderedAttributions_ = [];
-
-    /**
-     * @private
-     * @type {boolean}
-     */
-    this.renderedVisible_ = true;
-  }
-
-  /**
-   * Collect a list of visible attributions and set the collapsible state.
-   * @param {import("../Map.js").FrameState} frameState Frame state.
-   * @return {Array<string>} Attributions.
-   * @private
-   */
-  collectSourceAttributions_(frameState) {
-    const visibleAttributions = Array.from(
-      new Set(
-        this.getMap()
-          .getAllLayers()
-          .flatMap((layer) => layer.getAttributions(frameState))
-      )
-    );
-
-    const collapsible = !this.getMap()
-      .getAllLayers()
-      .some(
-        (layer) =>
-          layer.getSource() &&
-          layer.getSource().getAttributionsCollapsible() === false
-      );
-    if (!this.overrideCollapsible_) {
-      this.setCollapsible(collapsible);
-    }
-    return visibleAttributions;
-  }
-
-  /**
-   * @private
-   * @param {?import("../Map.js").FrameState} frameState Frame state.
-   */
-  updateElement_(frameState) {
-    if (!frameState) {
-      if (this.renderedVisible_) {
-        this.element.style.display = 'none';
-        this.renderedVisible_ = false;
-      }
-      return;
-    }
-
-    const attributions = this.collectSourceAttributions_(frameState);
-
-    const visible = attributions.length > 0;
-    if (this.renderedVisible_ != visible) {
-      this.element.style.display = visible ? '' : 'none';
-      this.renderedVisible_ = visible;
-    }
-
-    if ((0,array/* equals */.aI)(attributions, this.renderedAttributions_)) {
-      return;
-    }
-
-    (0,dom/* removeChildren */.gS)(this.ulElement_);
-
-    // append the attributions
-    for (let i = 0, ii = attributions.length; i < ii; ++i) {
-      const element = document.createElement('li');
-      element.innerHTML = attributions[i];
-      this.ulElement_.appendChild(element);
-    }
-
-    this.renderedAttributions_ = attributions;
-  }
-
-  /**
-   * @param {MouseEvent} event The event to handle
-   * @private
-   */
-  handleClick_(event) {
-    event.preventDefault();
-    this.handleToggle_();
-    this.userCollapsed_ = this.collapsed_;
-  }
-
-  /**
-   * @private
-   */
-  handleToggle_() {
-    this.element.classList.toggle(css/* CLASS_COLLAPSED */.nT);
-    if (this.collapsed_) {
-      (0,dom/* replaceNode */.fo)(this.collapseLabel_, this.label_);
-    } else {
-      (0,dom/* replaceNode */.fo)(this.label_, this.collapseLabel_);
-    }
-    this.collapsed_ = !this.collapsed_;
-    this.toggleButton_.setAttribute('aria-expanded', String(!this.collapsed_));
-  }
-
-  /**
-   * Return `true` if the attribution is collapsible, `false` otherwise.
-   * @return {boolean} True if the widget is collapsible.
-   * @api
-   */
-  getCollapsible() {
-    return this.collapsible_;
-  }
-
-  /**
-   * Set whether the attribution should be collapsible.
-   * @param {boolean} collapsible True if the widget is collapsible.
-   * @api
-   */
-  setCollapsible(collapsible) {
-    if (this.collapsible_ === collapsible) {
-      return;
-    }
-    this.collapsible_ = collapsible;
-    this.element.classList.toggle('ol-uncollapsible');
-    if (this.userCollapsed_) {
-      this.handleToggle_();
-    }
-  }
-
-  /**
-   * Collapse or expand the attribution according to the passed parameter. Will
-   * not do anything if the attribution isn't collapsible or if the current
-   * collapsed state is already the one requested.
-   * @param {boolean} collapsed True if the widget is collapsed.
-   * @api
-   */
-  setCollapsed(collapsed) {
-    this.userCollapsed_ = collapsed;
-    if (!this.collapsible_ || this.collapsed_ === collapsed) {
-      return;
-    }
-    this.handleToggle_();
-  }
-
-  /**
-   * Return `true` when the attribution is currently collapsed or `false`
-   * otherwise.
-   * @return {boolean} True if the widget is collapsed.
-   * @api
-   */
-  getCollapsed() {
-    return this.collapsed_;
-  }
-
-  /**
-   * Update the attribution element.
-   * @param {import("../MapEvent.js").default} mapEvent Map event.
-   * @override
-   */
-  render(mapEvent) {
-    this.updateElement_(mapEvent.frameState);
-  }
-}
-
-/* harmony default export */ const control_Attribution = (Attribution);
-
-// EXTERNAL MODULE: ./node_modules/ol/easing.js
-var easing = __webpack_require__(3474);
-;// ./node_modules/ol/control/Rotate.js
-/**
- * @module ol/control/Rotate
- */
-
-
-
-
-
-/**
- * @typedef {Object} Options
- * @property {string} [className='ol-rotate'] CSS class name.
- * @property {string|HTMLElement} [label='⇧'] Text label to use for the rotate button.
- * Instead of text, also an element (e.g. a `span` element) can be used.
- * @property {string} [tipLabel='Reset rotation'] Text label to use for the rotate tip.
- * @property {string} [compassClassName='ol-compass'] CSS class name for the compass.
- * @property {number} [duration=250] Animation duration in milliseconds.
- * @property {boolean} [autoHide=true] Hide the control when rotation is 0.
- * @property {function(import("../MapEvent.js").default):void} [render] Function called when the control should
- * be re-rendered. This is called in a `requestAnimationFrame` callback.
- * @property {function():void} [resetNorth] Function called when the control is clicked.
- * This will override the default `resetNorth`.
- * @property {HTMLElement|string} [target] Specify a target if you want the control to be
- * rendered outside of the map's viewport.
- */
-
-/**
- * @classdesc
- * A button control to reset rotation to 0.
- * To style this control use css selector `.ol-rotate`. A `.ol-hidden` css
- * selector is added to the button when the rotation is 0.
- *
- * @api
- */
-class Rotate extends control_Control {
-  /**
-   * @param {Options} [options] Rotate options.
-   */
-  constructor(options) {
-    options = options ? options : {};
-
-    super({
-      element: document.createElement('div'),
-      render: options.render,
-      target: options.target,
-    });
-
-    const className =
-      options.className !== undefined ? options.className : 'ol-rotate';
-
-    const label = options.label !== undefined ? options.label : '\u21E7';
-
-    const compassClassName =
-      options.compassClassName !== undefined
-        ? options.compassClassName
-        : 'ol-compass';
-
-    /**
-     * @type {HTMLElement}
-     * @private
-     */
-    this.label_ = null;
-
-    if (typeof label === 'string') {
-      this.label_ = document.createElement('span');
-      this.label_.className = compassClassName;
-      this.label_.textContent = label;
-    } else {
-      this.label_ = label;
-      this.label_.classList.add(compassClassName);
-    }
-
-    const tipLabel = options.tipLabel ? options.tipLabel : 'Reset rotation';
-
-    const button = document.createElement('button');
-    button.className = className + '-reset';
-    button.setAttribute('type', 'button');
-    button.title = tipLabel;
-    button.appendChild(this.label_);
-
-    button.addEventListener(
-      events_EventType/* default */.A.CLICK,
-      this.handleClick_.bind(this),
-      false
-    );
-
-    const cssClasses =
-      className + ' ' + css/* CLASS_UNSELECTABLE */.XI + ' ' + css/* CLASS_CONTROL */.$N;
-    const element = this.element;
-    element.className = cssClasses;
-    element.appendChild(button);
-
-    this.callResetNorth_ = options.resetNorth ? options.resetNorth : undefined;
-
-    /**
-     * @type {number}
-     * @private
-     */
-    this.duration_ = options.duration !== undefined ? options.duration : 250;
-
-    /**
-     * @type {boolean}
-     * @private
-     */
-    this.autoHide_ = options.autoHide !== undefined ? options.autoHide : true;
-
-    /**
-     * @private
-     * @type {number|undefined}
-     */
-    this.rotation_ = undefined;
-
-    if (this.autoHide_) {
-      this.element.classList.add(css/* CLASS_HIDDEN */.Si);
-    }
-  }
-
-  /**
-   * @param {MouseEvent} event The event to handle
-   * @private
-   */
-  handleClick_(event) {
-    event.preventDefault();
-    if (this.callResetNorth_ !== undefined) {
-      this.callResetNorth_();
-    } else {
-      this.resetNorth_();
-    }
-  }
-
-  /**
-   * @private
-   */
-  resetNorth_() {
-    const map = this.getMap();
-    const view = map.getView();
-    if (!view) {
-      // the map does not have a view, so we can't act
-      // upon it
-      return;
-    }
-    const rotation = view.getRotation();
-    if (rotation !== undefined) {
-      if (this.duration_ > 0 && rotation % (2 * Math.PI) !== 0) {
-        view.animate({
-          rotation: 0,
-          duration: this.duration_,
-          easing: easing/* easeOut */.vT,
-        });
-      } else {
-        view.setRotation(0);
-      }
-    }
-  }
-
-  /**
-   * Update the rotate control element.
-   * @param {import("../MapEvent.js").default} mapEvent Map event.
-   * @override
-   */
-  render(mapEvent) {
-    const frameState = mapEvent.frameState;
-    if (!frameState) {
-      return;
-    }
-    const rotation = frameState.viewState.rotation;
-    if (rotation != this.rotation_) {
-      const transform = 'rotate(' + rotation + 'rad)';
-      if (this.autoHide_) {
-        const contains = this.element.classList.contains(css/* CLASS_HIDDEN */.Si);
-        if (!contains && rotation === 0) {
-          this.element.classList.add(css/* CLASS_HIDDEN */.Si);
-        } else if (contains && rotation !== 0) {
-          this.element.classList.remove(css/* CLASS_HIDDEN */.Si);
-        }
-      }
-      this.label_.style.transform = transform;
-    }
-    this.rotation_ = rotation;
-  }
-}
-
-/* harmony default export */ const control_Rotate = (Rotate);
-
-;// ./node_modules/ol/control/Zoom.js
-/**
- * @module ol/control/Zoom
- */
-
-
-
-
-
-/**
- * @typedef {Object} Options
- * @property {number} [duration=250] Animation duration in milliseconds.
- * @property {string} [className='ol-zoom'] CSS class name.
- * @property {string} [zoomInClassName=className + '-in'] CSS class name for the zoom-in button.
- * @property {string} [zoomOutClassName=className + '-out'] CSS class name for the zoom-out button.
- * @property {string|HTMLElement} [zoomInLabel='+'] Text label to use for the zoom-in
- * button. Instead of text, also an element (e.g. a `span` element) can be used.
- * @property {string|HTMLElement} [zoomOutLabel='–'] Text label to use for the zoom-out button.
- * Instead of text, also an element (e.g. a `span` element) can be used.
- * @property {string} [zoomInTipLabel='Zoom in'] Text label to use for the button tip.
- * @property {string} [zoomOutTipLabel='Zoom out'] Text label to use for the button tip.
- * @property {number} [delta=1] The zoom delta applied on each click.
- * @property {HTMLElement|string} [target] Specify a target if you want the control to be
- * rendered outside of the map's viewport.
- */
-
-/**
- * @classdesc
- * A control with 2 buttons, one for zoom in and one for zoom out.
- * This control is one of the default controls of a map. To style this control
- * use css selectors `.ol-zoom-in` and `.ol-zoom-out`.
- *
- * @api
- */
-class Zoom extends control_Control {
-  /**
-   * @param {Options} [options] Zoom options.
-   */
-  constructor(options) {
-    options = options ? options : {};
-
-    super({
-      element: document.createElement('div'),
-      target: options.target,
-    });
-
-    const className =
-      options.className !== undefined ? options.className : 'ol-zoom';
-
-    const delta = options.delta !== undefined ? options.delta : 1;
-
-    const zoomInClassName =
-      options.zoomInClassName !== undefined
-        ? options.zoomInClassName
-        : className + '-in';
-
-    const zoomOutClassName =
-      options.zoomOutClassName !== undefined
-        ? options.zoomOutClassName
-        : className + '-out';
-
-    const zoomInLabel =
-      options.zoomInLabel !== undefined ? options.zoomInLabel : '+';
-    const zoomOutLabel =
-      options.zoomOutLabel !== undefined ? options.zoomOutLabel : '\u2013';
-
-    const zoomInTipLabel =
-      options.zoomInTipLabel !== undefined ? options.zoomInTipLabel : 'Zoom in';
-    const zoomOutTipLabel =
-      options.zoomOutTipLabel !== undefined
-        ? options.zoomOutTipLabel
-        : 'Zoom out';
-
-    const inElement = document.createElement('button');
-    inElement.className = zoomInClassName;
-    inElement.setAttribute('type', 'button');
-    inElement.title = zoomInTipLabel;
-    inElement.appendChild(
-      typeof zoomInLabel === 'string'
-        ? document.createTextNode(zoomInLabel)
-        : zoomInLabel
-    );
-
-    inElement.addEventListener(
-      events_EventType/* default */.A.CLICK,
-      this.handleClick_.bind(this, delta),
-      false
-    );
-
-    const outElement = document.createElement('button');
-    outElement.className = zoomOutClassName;
-    outElement.setAttribute('type', 'button');
-    outElement.title = zoomOutTipLabel;
-    outElement.appendChild(
-      typeof zoomOutLabel === 'string'
-        ? document.createTextNode(zoomOutLabel)
-        : zoomOutLabel
-    );
-
-    outElement.addEventListener(
-      events_EventType/* default */.A.CLICK,
-      this.handleClick_.bind(this, -delta),
-      false
-    );
-
-    const cssClasses =
-      className + ' ' + css/* CLASS_UNSELECTABLE */.XI + ' ' + css/* CLASS_CONTROL */.$N;
-    const element = this.element;
-    element.className = cssClasses;
-    element.appendChild(inElement);
-    element.appendChild(outElement);
-
-    /**
-     * @type {number}
-     * @private
-     */
-    this.duration_ = options.duration !== undefined ? options.duration : 250;
-  }
-
-  /**
-   * @param {number} delta Zoom delta.
-   * @param {MouseEvent} event The event to handle
-   * @private
-   */
-  handleClick_(delta, event) {
-    event.preventDefault();
-    this.zoomByDelta_(delta);
-  }
-
-  /**
-   * @param {number} delta Zoom delta.
-   * @private
-   */
-  zoomByDelta_(delta) {
-    const map = this.getMap();
-    const view = map.getView();
-    if (!view) {
-      // the map does not have a view, so we can't act
-      // upon it
-      return;
-    }
-    const currentZoom = view.getZoom();
-    if (currentZoom !== undefined) {
-      const newZoom = view.getConstrainedZoom(currentZoom + delta);
-      if (this.duration_ > 0) {
-        if (view.getAnimating()) {
-          view.cancelAnimations();
-        }
-        view.animate({
-          zoom: newZoom,
-          duration: this.duration_,
-          easing: easing/* easeOut */.vT,
-        });
-      } else {
-        view.setZoom(newZoom);
-      }
-    }
-  }
-}
-
-/* harmony default export */ const control_Zoom = (Zoom);
-
-;// ./node_modules/ol/control/defaults.js
-/**
- * @module ol/control/defaults
- */
-
-
-
-
-
-/**
- * @typedef {Object} DefaultsOptions
- * @property {boolean} [attribution=true] Include
- * {@link module:ol/control/Attribution~Attribution}.
- * @property {import("./Attribution.js").Options} [attributionOptions]
- * Options for {@link module:ol/control/Attribution~Attribution}.
- * @property {boolean} [rotate=true] Include
- * {@link module:ol/control/Rotate~Rotate}.
- * @property {import("./Rotate.js").Options} [rotateOptions] Options
- * for {@link module:ol/control/Rotate~Rotate}.
- * @property {boolean} [zoom] Include {@link module:ol/control/Zoom~Zoom}.
- * @property {import("./Zoom.js").Options} [zoomOptions] Options for
- * {@link module:ol/control/Zoom~Zoom}.
- */
-
-/**
- * Set of controls included in maps by default. Unless configured otherwise,
- * this returns a collection containing an instance of each of the following
- * controls:
- * * {@link module:ol/control/Zoom~Zoom}
- * * {@link module:ol/control/Rotate~Rotate}
- * * {@link module:ol/control/Attribution~Attribution}
- *
- * @param {DefaultsOptions} [options] Options for the default controls.
- * @return {Collection<import("./Control.js").default>} A collection of controls
- * to be used with the {@link module:ol/Map~Map} constructor's `controls` option.
- * @api
- */
-function defaults(options) {
-  options = options ? options : {};
-
-  /** @type {Collection<import("./Control.js").default>} */
-  const controls = new Collection/* default */.A();
-
-  const zoomControl = options.zoom !== undefined ? options.zoom : true;
-  if (zoomControl) {
-    controls.push(new control_Zoom(options.zoomOptions));
-  }
-
-  const rotateControl = options.rotate !== undefined ? options.rotate : true;
-  if (rotateControl) {
-    controls.push(new control_Rotate(options.rotateOptions));
-  }
-
-  const attributionControl =
-    options.attribution !== undefined ? options.attribution : true;
-  if (attributionControl) {
-    controls.push(new control_Attribution(options.attributionOptions));
-  }
-
-  return controls;
-}
-
+// EXTERNAL MODULE: ./node_modules/ol/control/defaults.js + 4 modules
+var defaults = __webpack_require__(4307);
 // EXTERNAL MODULE: ./node_modules/ol/interaction/defaults.js + 1 modules
 var interaction_defaults = __webpack_require__(9318);
+// EXTERNAL MODULE: ./node_modules/ol/array.js
+var array = __webpack_require__(6514);
 // EXTERNAL MODULE: ./node_modules/ol/proj.js + 6 modules
 var proj = __webpack_require__(2796);
 // EXTERNAL MODULE: ./node_modules/ol/size.js
@@ -4632,7 +3733,7 @@ class Map_Map extends ol_Object/* default */.A {
      * @type {Collection<import("./control/Control.js").default>}
      * @protected
      */
-    this.controls = optionsInternal.controls || defaults();
+    this.controls = optionsInternal.controls || (0,defaults.defaults)();
 
     /**
      * @type {Collection<import("./interaction/Interaction.js").default>}
@@ -10572,6 +9673,949 @@ function error(...args) {
     return;
   }
   console.error(...args); // eslint-disable-line no-console
+}
+
+
+/***/ }),
+
+/***/ 4307:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+// ESM COMPAT FLAG
+__webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  defaults: () => (/* binding */ defaults)
+});
+
+// EXTERNAL MODULE: ./node_modules/ol/Object.js
+var ol_Object = __webpack_require__(4120);
+// EXTERNAL MODULE: ./node_modules/ol/MapEventType.js
+var MapEventType = __webpack_require__(2585);
+// EXTERNAL MODULE: ./node_modules/ol/functions.js
+var functions = __webpack_require__(4238);
+// EXTERNAL MODULE: ./node_modules/ol/events.js
+var events = __webpack_require__(9438);
+// EXTERNAL MODULE: ./node_modules/ol/dom.js
+var dom = __webpack_require__(8711);
+;// ./node_modules/ol/control/Control.js
+/**
+ * @module ol/control/Control
+ */
+
+
+
+
+
+
+/**
+ * @typedef {Object} Options
+ * @property {HTMLElement} [element] The element is the control's
+ * container element. This only needs to be specified if you're developing
+ * a custom control.
+ * @property {function(import("../MapEvent.js").default):void} [render] Function called when
+ * the control should be re-rendered. This is called in a `requestAnimationFrame`
+ * callback.
+ * @property {HTMLElement|string} [target] Specify a target if you want
+ * the control to be rendered outside of the map's viewport.
+ */
+
+/**
+ * @classdesc
+ * A control is a visible widget with a DOM element in a fixed position on the
+ * screen. They can involve user input (buttons), or be informational only;
+ * the position is determined using CSS. By default these are placed in the
+ * container with CSS class name `ol-overlaycontainer-stopevent`, but can use
+ * any outside DOM element.
+ *
+ * This is the base class for controls. You can use it for simple custom
+ * controls by creating the element with listeners, creating an instance:
+ * ```js
+ * const myControl = new Control({element: myElement});
+ * ```
+ * and then adding this to the map.
+ *
+ * The main advantage of having this as a control rather than a simple separate
+ * DOM element is that preventing propagation is handled for you. Controls
+ * will also be objects in a {@link module:ol/Collection~Collection}, so you can use their methods.
+ *
+ * You can also extend this base for your own control class. See
+ * examples/custom-controls for an example of how to do this.
+ *
+ * @api
+ */
+class Control extends ol_Object/* default */.A {
+  /**
+   * @param {Options} options Control options.
+   */
+  constructor(options) {
+    super();
+
+    const element = options.element;
+    if (element && !options.target && !element.style.pointerEvents) {
+      element.style.pointerEvents = 'auto';
+    }
+
+    /**
+     * @protected
+     * @type {HTMLElement}
+     */
+    this.element = element ? element : null;
+
+    /**
+     * @private
+     * @type {HTMLElement}
+     */
+    this.target_ = null;
+
+    /**
+     * @private
+     * @type {import("../Map.js").default|null}
+     */
+    this.map_ = null;
+
+    /**
+     * @protected
+     * @type {!Array<import("../events.js").EventsKey>}
+     */
+    this.listenerKeys = [];
+
+    if (options.render) {
+      this.render = options.render;
+    }
+
+    if (options.target) {
+      this.setTarget(options.target);
+    }
+  }
+
+  /**
+   * Clean up.
+   */
+  disposeInternal() {
+    (0,dom/* removeNode */.bf)(this.element);
+    super.disposeInternal();
+  }
+
+  /**
+   * Get the map associated with this control.
+   * @return {import("../Map.js").default|null} Map.
+   * @api
+   */
+  getMap() {
+    return this.map_;
+  }
+
+  /**
+   * Remove the control from its current map and attach it to the new map.
+   * Pass `null` to just remove the control from the current map.
+   * Subclasses may set up event handlers to get notified about changes to
+   * the map here.
+   * @param {import("../Map.js").default|null} map Map.
+   * @api
+   */
+  setMap(map) {
+    if (this.map_) {
+      (0,dom/* removeNode */.bf)(this.element);
+    }
+    for (let i = 0, ii = this.listenerKeys.length; i < ii; ++i) {
+      (0,events/* unlistenByKey */.JH)(this.listenerKeys[i]);
+    }
+    this.listenerKeys.length = 0;
+    this.map_ = map;
+    if (map) {
+      const target = this.target_
+        ? this.target_
+        : map.getOverlayContainerStopEvent();
+      target.appendChild(this.element);
+      if (this.render !== functions/* VOID */.tV) {
+        this.listenerKeys.push(
+          (0,events/* listen */.KT)(map, MapEventType/* default */.A.POSTRENDER, this.render, this)
+        );
+      }
+      map.render();
+    }
+  }
+
+  /**
+   * Renders the control.
+   * @param {import("../MapEvent.js").default} mapEvent Map event.
+   * @api
+   */
+  render(mapEvent) {}
+
+  /**
+   * This function is used to set a target element for the control. It has no
+   * effect if it is called after the control has been added to the map (i.e.
+   * after `setMap` is called on the control). If no `target` is set in the
+   * options passed to the control constructor and if `setTarget` is not called
+   * then the control is added to the map's overlay container.
+   * @param {HTMLElement|string} target Target.
+   * @api
+   */
+  setTarget(target) {
+    this.target_ =
+      typeof target === 'string' ? document.getElementById(target) : target;
+  }
+}
+
+/* harmony default export */ const control_Control = (Control);
+
+// EXTERNAL MODULE: ./node_modules/ol/events/EventType.js
+var EventType = __webpack_require__(6837);
+// EXTERNAL MODULE: ./node_modules/ol/css.js
+var css = __webpack_require__(5176);
+// EXTERNAL MODULE: ./node_modules/ol/array.js
+var array = __webpack_require__(6514);
+;// ./node_modules/ol/control/Attribution.js
+/**
+ * @module ol/control/Attribution
+ */
+
+
+
+
+
+
+/**
+ * @typedef {Object} Options
+ * @property {string} [className='ol-attribution'] CSS class name.
+ * @property {HTMLElement|string} [target] Specify a target if you
+ * want the control to be rendered outside of the map's
+ * viewport.
+ * @property {boolean} [collapsible] Specify if attributions can
+ * be collapsed. If not specified, sources control this behavior with their
+ * `attributionsCollapsible` setting.
+ * @property {boolean} [collapsed=true] Specify if attributions should
+ * be collapsed at startup.
+ * @property {string} [tipLabel='Attributions'] Text label to use for the button tip.
+ * @property {string|HTMLElement} [label='i'] Text label to use for the
+ * collapsed attributions button.
+ * Instead of text, also an element (e.g. a `span` element) can be used.
+ * @property {string} [expandClassName=className + '-expand'] CSS class name for the
+ * collapsed attributions button.
+ * @property {string|HTMLElement} [collapseLabel='›'] Text label to use
+ * for the expanded attributions button.
+ * Instead of text, also an element (e.g. a `span` element) can be used.
+ * @property {string} [collapseClassName=className + '-collapse'] CSS class name for the
+ * expanded attributions button.
+ * @property {function(import("../MapEvent.js").default):void} [render] Function called when
+ * the control should be re-rendered. This is called in a `requestAnimationFrame`
+ * callback.
+ */
+
+/**
+ * @classdesc
+ * Control to show all the attributions associated with the layer sources
+ * in the map. This control is one of the default controls included in maps.
+ * By default it will show in the bottom right portion of the map, but this can
+ * be changed by using a css selector for `.ol-attribution`.
+ *
+ * @api
+ */
+class Attribution extends control_Control {
+  /**
+   * @param {Options} [options] Attribution options.
+   */
+  constructor(options) {
+    options = options ? options : {};
+
+    super({
+      element: document.createElement('div'),
+      render: options.render,
+      target: options.target,
+    });
+
+    /**
+     * @private
+     * @type {HTMLElement}
+     */
+    this.ulElement_ = document.createElement('ul');
+
+    /**
+     * @private
+     * @type {boolean}
+     */
+    this.collapsed_ =
+      options.collapsed !== undefined ? options.collapsed : true;
+
+    /**
+     * @private
+     * @type {boolean}
+     */
+    this.userCollapsed_ = this.collapsed_;
+
+    /**
+     * @private
+     * @type {boolean}
+     */
+    this.overrideCollapsible_ = options.collapsible !== undefined;
+
+    /**
+     * @private
+     * @type {boolean}
+     */
+    this.collapsible_ =
+      options.collapsible !== undefined ? options.collapsible : true;
+
+    if (!this.collapsible_) {
+      this.collapsed_ = false;
+    }
+
+    const className =
+      options.className !== undefined ? options.className : 'ol-attribution';
+
+    const tipLabel =
+      options.tipLabel !== undefined ? options.tipLabel : 'Attributions';
+
+    const expandClassName =
+      options.expandClassName !== undefined
+        ? options.expandClassName
+        : className + '-expand';
+
+    const collapseLabel =
+      options.collapseLabel !== undefined ? options.collapseLabel : '\u203A';
+
+    const collapseClassName =
+      options.collapseClassName !== undefined
+        ? options.collapseClassName
+        : className + '-collapse';
+
+    if (typeof collapseLabel === 'string') {
+      /**
+       * @private
+       * @type {HTMLElement}
+       */
+      this.collapseLabel_ = document.createElement('span');
+      this.collapseLabel_.textContent = collapseLabel;
+      this.collapseLabel_.className = collapseClassName;
+    } else {
+      this.collapseLabel_ = collapseLabel;
+    }
+
+    const label = options.label !== undefined ? options.label : 'i';
+
+    if (typeof label === 'string') {
+      /**
+       * @private
+       * @type {HTMLElement}
+       */
+      this.label_ = document.createElement('span');
+      this.label_.textContent = label;
+      this.label_.className = expandClassName;
+    } else {
+      this.label_ = label;
+    }
+
+    const activeLabel =
+      this.collapsible_ && !this.collapsed_ ? this.collapseLabel_ : this.label_;
+
+    /**
+     * @private
+     * @type {HTMLElement}
+     */
+    this.toggleButton_ = document.createElement('button');
+    this.toggleButton_.setAttribute('type', 'button');
+    this.toggleButton_.setAttribute('aria-expanded', String(!this.collapsed_));
+    this.toggleButton_.title = tipLabel;
+    this.toggleButton_.appendChild(activeLabel);
+
+    this.toggleButton_.addEventListener(
+      EventType/* default */.A.CLICK,
+      this.handleClick_.bind(this),
+      false
+    );
+
+    const cssClasses =
+      className +
+      ' ' +
+      css/* CLASS_UNSELECTABLE */.XI +
+      ' ' +
+      css/* CLASS_CONTROL */.$N +
+      (this.collapsed_ && this.collapsible_ ? ' ' + css/* CLASS_COLLAPSED */.nT : '') +
+      (this.collapsible_ ? '' : ' ol-uncollapsible');
+    const element = this.element;
+    element.className = cssClasses;
+    element.appendChild(this.toggleButton_);
+    element.appendChild(this.ulElement_);
+
+    /**
+     * A list of currently rendered resolutions.
+     * @type {Array<string>}
+     * @private
+     */
+    this.renderedAttributions_ = [];
+
+    /**
+     * @private
+     * @type {boolean}
+     */
+    this.renderedVisible_ = true;
+  }
+
+  /**
+   * Collect a list of visible attributions and set the collapsible state.
+   * @param {import("../Map.js").FrameState} frameState Frame state.
+   * @return {Array<string>} Attributions.
+   * @private
+   */
+  collectSourceAttributions_(frameState) {
+    const visibleAttributions = Array.from(
+      new Set(
+        this.getMap()
+          .getAllLayers()
+          .flatMap((layer) => layer.getAttributions(frameState))
+      )
+    );
+
+    const collapsible = !this.getMap()
+      .getAllLayers()
+      .some(
+        (layer) =>
+          layer.getSource() &&
+          layer.getSource().getAttributionsCollapsible() === false
+      );
+    if (!this.overrideCollapsible_) {
+      this.setCollapsible(collapsible);
+    }
+    return visibleAttributions;
+  }
+
+  /**
+   * @private
+   * @param {?import("../Map.js").FrameState} frameState Frame state.
+   */
+  updateElement_(frameState) {
+    if (!frameState) {
+      if (this.renderedVisible_) {
+        this.element.style.display = 'none';
+        this.renderedVisible_ = false;
+      }
+      return;
+    }
+
+    const attributions = this.collectSourceAttributions_(frameState);
+
+    const visible = attributions.length > 0;
+    if (this.renderedVisible_ != visible) {
+      this.element.style.display = visible ? '' : 'none';
+      this.renderedVisible_ = visible;
+    }
+
+    if ((0,array/* equals */.aI)(attributions, this.renderedAttributions_)) {
+      return;
+    }
+
+    (0,dom/* removeChildren */.gS)(this.ulElement_);
+
+    // append the attributions
+    for (let i = 0, ii = attributions.length; i < ii; ++i) {
+      const element = document.createElement('li');
+      element.innerHTML = attributions[i];
+      this.ulElement_.appendChild(element);
+    }
+
+    this.renderedAttributions_ = attributions;
+  }
+
+  /**
+   * @param {MouseEvent} event The event to handle
+   * @private
+   */
+  handleClick_(event) {
+    event.preventDefault();
+    this.handleToggle_();
+    this.userCollapsed_ = this.collapsed_;
+  }
+
+  /**
+   * @private
+   */
+  handleToggle_() {
+    this.element.classList.toggle(css/* CLASS_COLLAPSED */.nT);
+    if (this.collapsed_) {
+      (0,dom/* replaceNode */.fo)(this.collapseLabel_, this.label_);
+    } else {
+      (0,dom/* replaceNode */.fo)(this.label_, this.collapseLabel_);
+    }
+    this.collapsed_ = !this.collapsed_;
+    this.toggleButton_.setAttribute('aria-expanded', String(!this.collapsed_));
+  }
+
+  /**
+   * Return `true` if the attribution is collapsible, `false` otherwise.
+   * @return {boolean} True if the widget is collapsible.
+   * @api
+   */
+  getCollapsible() {
+    return this.collapsible_;
+  }
+
+  /**
+   * Set whether the attribution should be collapsible.
+   * @param {boolean} collapsible True if the widget is collapsible.
+   * @api
+   */
+  setCollapsible(collapsible) {
+    if (this.collapsible_ === collapsible) {
+      return;
+    }
+    this.collapsible_ = collapsible;
+    this.element.classList.toggle('ol-uncollapsible');
+    if (this.userCollapsed_) {
+      this.handleToggle_();
+    }
+  }
+
+  /**
+   * Collapse or expand the attribution according to the passed parameter. Will
+   * not do anything if the attribution isn't collapsible or if the current
+   * collapsed state is already the one requested.
+   * @param {boolean} collapsed True if the widget is collapsed.
+   * @api
+   */
+  setCollapsed(collapsed) {
+    this.userCollapsed_ = collapsed;
+    if (!this.collapsible_ || this.collapsed_ === collapsed) {
+      return;
+    }
+    this.handleToggle_();
+  }
+
+  /**
+   * Return `true` when the attribution is currently collapsed or `false`
+   * otherwise.
+   * @return {boolean} True if the widget is collapsed.
+   * @api
+   */
+  getCollapsed() {
+    return this.collapsed_;
+  }
+
+  /**
+   * Update the attribution element.
+   * @param {import("../MapEvent.js").default} mapEvent Map event.
+   * @override
+   */
+  render(mapEvent) {
+    this.updateElement_(mapEvent.frameState);
+  }
+}
+
+/* harmony default export */ const control_Attribution = (Attribution);
+
+// EXTERNAL MODULE: ./node_modules/ol/Collection.js
+var Collection = __webpack_require__(71);
+// EXTERNAL MODULE: ./node_modules/ol/easing.js
+var easing = __webpack_require__(3474);
+;// ./node_modules/ol/control/Rotate.js
+/**
+ * @module ol/control/Rotate
+ */
+
+
+
+
+
+/**
+ * @typedef {Object} Options
+ * @property {string} [className='ol-rotate'] CSS class name.
+ * @property {string|HTMLElement} [label='⇧'] Text label to use for the rotate button.
+ * Instead of text, also an element (e.g. a `span` element) can be used.
+ * @property {string} [tipLabel='Reset rotation'] Text label to use for the rotate tip.
+ * @property {string} [compassClassName='ol-compass'] CSS class name for the compass.
+ * @property {number} [duration=250] Animation duration in milliseconds.
+ * @property {boolean} [autoHide=true] Hide the control when rotation is 0.
+ * @property {function(import("../MapEvent.js").default):void} [render] Function called when the control should
+ * be re-rendered. This is called in a `requestAnimationFrame` callback.
+ * @property {function():void} [resetNorth] Function called when the control is clicked.
+ * This will override the default `resetNorth`.
+ * @property {HTMLElement|string} [target] Specify a target if you want the control to be
+ * rendered outside of the map's viewport.
+ */
+
+/**
+ * @classdesc
+ * A button control to reset rotation to 0.
+ * To style this control use css selector `.ol-rotate`. A `.ol-hidden` css
+ * selector is added to the button when the rotation is 0.
+ *
+ * @api
+ */
+class Rotate extends control_Control {
+  /**
+   * @param {Options} [options] Rotate options.
+   */
+  constructor(options) {
+    options = options ? options : {};
+
+    super({
+      element: document.createElement('div'),
+      render: options.render,
+      target: options.target,
+    });
+
+    const className =
+      options.className !== undefined ? options.className : 'ol-rotate';
+
+    const label = options.label !== undefined ? options.label : '\u21E7';
+
+    const compassClassName =
+      options.compassClassName !== undefined
+        ? options.compassClassName
+        : 'ol-compass';
+
+    /**
+     * @type {HTMLElement}
+     * @private
+     */
+    this.label_ = null;
+
+    if (typeof label === 'string') {
+      this.label_ = document.createElement('span');
+      this.label_.className = compassClassName;
+      this.label_.textContent = label;
+    } else {
+      this.label_ = label;
+      this.label_.classList.add(compassClassName);
+    }
+
+    const tipLabel = options.tipLabel ? options.tipLabel : 'Reset rotation';
+
+    const button = document.createElement('button');
+    button.className = className + '-reset';
+    button.setAttribute('type', 'button');
+    button.title = tipLabel;
+    button.appendChild(this.label_);
+
+    button.addEventListener(
+      EventType/* default */.A.CLICK,
+      this.handleClick_.bind(this),
+      false
+    );
+
+    const cssClasses =
+      className + ' ' + css/* CLASS_UNSELECTABLE */.XI + ' ' + css/* CLASS_CONTROL */.$N;
+    const element = this.element;
+    element.className = cssClasses;
+    element.appendChild(button);
+
+    this.callResetNorth_ = options.resetNorth ? options.resetNorth : undefined;
+
+    /**
+     * @type {number}
+     * @private
+     */
+    this.duration_ = options.duration !== undefined ? options.duration : 250;
+
+    /**
+     * @type {boolean}
+     * @private
+     */
+    this.autoHide_ = options.autoHide !== undefined ? options.autoHide : true;
+
+    /**
+     * @private
+     * @type {number|undefined}
+     */
+    this.rotation_ = undefined;
+
+    if (this.autoHide_) {
+      this.element.classList.add(css/* CLASS_HIDDEN */.Si);
+    }
+  }
+
+  /**
+   * @param {MouseEvent} event The event to handle
+   * @private
+   */
+  handleClick_(event) {
+    event.preventDefault();
+    if (this.callResetNorth_ !== undefined) {
+      this.callResetNorth_();
+    } else {
+      this.resetNorth_();
+    }
+  }
+
+  /**
+   * @private
+   */
+  resetNorth_() {
+    const map = this.getMap();
+    const view = map.getView();
+    if (!view) {
+      // the map does not have a view, so we can't act
+      // upon it
+      return;
+    }
+    const rotation = view.getRotation();
+    if (rotation !== undefined) {
+      if (this.duration_ > 0 && rotation % (2 * Math.PI) !== 0) {
+        view.animate({
+          rotation: 0,
+          duration: this.duration_,
+          easing: easing/* easeOut */.vT,
+        });
+      } else {
+        view.setRotation(0);
+      }
+    }
+  }
+
+  /**
+   * Update the rotate control element.
+   * @param {import("../MapEvent.js").default} mapEvent Map event.
+   * @override
+   */
+  render(mapEvent) {
+    const frameState = mapEvent.frameState;
+    if (!frameState) {
+      return;
+    }
+    const rotation = frameState.viewState.rotation;
+    if (rotation != this.rotation_) {
+      const transform = 'rotate(' + rotation + 'rad)';
+      if (this.autoHide_) {
+        const contains = this.element.classList.contains(css/* CLASS_HIDDEN */.Si);
+        if (!contains && rotation === 0) {
+          this.element.classList.add(css/* CLASS_HIDDEN */.Si);
+        } else if (contains && rotation !== 0) {
+          this.element.classList.remove(css/* CLASS_HIDDEN */.Si);
+        }
+      }
+      this.label_.style.transform = transform;
+    }
+    this.rotation_ = rotation;
+  }
+}
+
+/* harmony default export */ const control_Rotate = (Rotate);
+
+;// ./node_modules/ol/control/Zoom.js
+/**
+ * @module ol/control/Zoom
+ */
+
+
+
+
+
+/**
+ * @typedef {Object} Options
+ * @property {number} [duration=250] Animation duration in milliseconds.
+ * @property {string} [className='ol-zoom'] CSS class name.
+ * @property {string} [zoomInClassName=className + '-in'] CSS class name for the zoom-in button.
+ * @property {string} [zoomOutClassName=className + '-out'] CSS class name for the zoom-out button.
+ * @property {string|HTMLElement} [zoomInLabel='+'] Text label to use for the zoom-in
+ * button. Instead of text, also an element (e.g. a `span` element) can be used.
+ * @property {string|HTMLElement} [zoomOutLabel='–'] Text label to use for the zoom-out button.
+ * Instead of text, also an element (e.g. a `span` element) can be used.
+ * @property {string} [zoomInTipLabel='Zoom in'] Text label to use for the button tip.
+ * @property {string} [zoomOutTipLabel='Zoom out'] Text label to use for the button tip.
+ * @property {number} [delta=1] The zoom delta applied on each click.
+ * @property {HTMLElement|string} [target] Specify a target if you want the control to be
+ * rendered outside of the map's viewport.
+ */
+
+/**
+ * @classdesc
+ * A control with 2 buttons, one for zoom in and one for zoom out.
+ * This control is one of the default controls of a map. To style this control
+ * use css selectors `.ol-zoom-in` and `.ol-zoom-out`.
+ *
+ * @api
+ */
+class Zoom extends control_Control {
+  /**
+   * @param {Options} [options] Zoom options.
+   */
+  constructor(options) {
+    options = options ? options : {};
+
+    super({
+      element: document.createElement('div'),
+      target: options.target,
+    });
+
+    const className =
+      options.className !== undefined ? options.className : 'ol-zoom';
+
+    const delta = options.delta !== undefined ? options.delta : 1;
+
+    const zoomInClassName =
+      options.zoomInClassName !== undefined
+        ? options.zoomInClassName
+        : className + '-in';
+
+    const zoomOutClassName =
+      options.zoomOutClassName !== undefined
+        ? options.zoomOutClassName
+        : className + '-out';
+
+    const zoomInLabel =
+      options.zoomInLabel !== undefined ? options.zoomInLabel : '+';
+    const zoomOutLabel =
+      options.zoomOutLabel !== undefined ? options.zoomOutLabel : '\u2013';
+
+    const zoomInTipLabel =
+      options.zoomInTipLabel !== undefined ? options.zoomInTipLabel : 'Zoom in';
+    const zoomOutTipLabel =
+      options.zoomOutTipLabel !== undefined
+        ? options.zoomOutTipLabel
+        : 'Zoom out';
+
+    const inElement = document.createElement('button');
+    inElement.className = zoomInClassName;
+    inElement.setAttribute('type', 'button');
+    inElement.title = zoomInTipLabel;
+    inElement.appendChild(
+      typeof zoomInLabel === 'string'
+        ? document.createTextNode(zoomInLabel)
+        : zoomInLabel
+    );
+
+    inElement.addEventListener(
+      EventType/* default */.A.CLICK,
+      this.handleClick_.bind(this, delta),
+      false
+    );
+
+    const outElement = document.createElement('button');
+    outElement.className = zoomOutClassName;
+    outElement.setAttribute('type', 'button');
+    outElement.title = zoomOutTipLabel;
+    outElement.appendChild(
+      typeof zoomOutLabel === 'string'
+        ? document.createTextNode(zoomOutLabel)
+        : zoomOutLabel
+    );
+
+    outElement.addEventListener(
+      EventType/* default */.A.CLICK,
+      this.handleClick_.bind(this, -delta),
+      false
+    );
+
+    const cssClasses =
+      className + ' ' + css/* CLASS_UNSELECTABLE */.XI + ' ' + css/* CLASS_CONTROL */.$N;
+    const element = this.element;
+    element.className = cssClasses;
+    element.appendChild(inElement);
+    element.appendChild(outElement);
+
+    /**
+     * @type {number}
+     * @private
+     */
+    this.duration_ = options.duration !== undefined ? options.duration : 250;
+  }
+
+  /**
+   * @param {number} delta Zoom delta.
+   * @param {MouseEvent} event The event to handle
+   * @private
+   */
+  handleClick_(delta, event) {
+    event.preventDefault();
+    this.zoomByDelta_(delta);
+  }
+
+  /**
+   * @param {number} delta Zoom delta.
+   * @private
+   */
+  zoomByDelta_(delta) {
+    const map = this.getMap();
+    const view = map.getView();
+    if (!view) {
+      // the map does not have a view, so we can't act
+      // upon it
+      return;
+    }
+    const currentZoom = view.getZoom();
+    if (currentZoom !== undefined) {
+      const newZoom = view.getConstrainedZoom(currentZoom + delta);
+      if (this.duration_ > 0) {
+        if (view.getAnimating()) {
+          view.cancelAnimations();
+        }
+        view.animate({
+          zoom: newZoom,
+          duration: this.duration_,
+          easing: easing/* easeOut */.vT,
+        });
+      } else {
+        view.setZoom(newZoom);
+      }
+    }
+  }
+}
+
+/* harmony default export */ const control_Zoom = (Zoom);
+
+;// ./node_modules/ol/control/defaults.js
+/**
+ * @module ol/control/defaults
+ */
+
+
+
+
+
+/**
+ * @typedef {Object} DefaultsOptions
+ * @property {boolean} [attribution=true] Include
+ * {@link module:ol/control/Attribution~Attribution}.
+ * @property {import("./Attribution.js").Options} [attributionOptions]
+ * Options for {@link module:ol/control/Attribution~Attribution}.
+ * @property {boolean} [rotate=true] Include
+ * {@link module:ol/control/Rotate~Rotate}.
+ * @property {import("./Rotate.js").Options} [rotateOptions] Options
+ * for {@link module:ol/control/Rotate~Rotate}.
+ * @property {boolean} [zoom] Include {@link module:ol/control/Zoom~Zoom}.
+ * @property {import("./Zoom.js").Options} [zoomOptions] Options for
+ * {@link module:ol/control/Zoom~Zoom}.
+ */
+
+/**
+ * Set of controls included in maps by default. Unless configured otherwise,
+ * this returns a collection containing an instance of each of the following
+ * controls:
+ * * {@link module:ol/control/Zoom~Zoom}
+ * * {@link module:ol/control/Rotate~Rotate}
+ * * {@link module:ol/control/Attribution~Attribution}
+ *
+ * @param {DefaultsOptions} [options] Options for the default controls.
+ * @return {Collection<import("./Control.js").default>} A collection of controls
+ * to be used with the {@link module:ol/Map~Map} constructor's `controls` option.
+ * @api
+ */
+function defaults(options) {
+  options = options ? options : {};
+
+  /** @type {Collection<import("./Control.js").default>} */
+  const controls = new Collection/* default */.A();
+
+  const zoomControl = options.zoom !== undefined ? options.zoom : true;
+  if (zoomControl) {
+    controls.push(new control_Zoom(options.zoomOptions));
+  }
+
+  const rotateControl = options.rotate !== undefined ? options.rotate : true;
+  if (rotateControl) {
+    controls.push(new control_Rotate(options.rotateOptions));
+  }
+
+  const attributionControl =
+    options.attribution !== undefined ? options.attribution : true;
+  if (attributionControl) {
+    controls.push(new control_Attribution(options.attributionOptions));
+  }
+
+  return controls;
 }
 
 

@@ -7,6 +7,7 @@ import Geometry from 'ol/geom/Geometry.js';
 import VectorSource from 'ol/source/Vector.js';
 import { Coordinate } from 'ol/coordinate';
 import { fromLonLat, toLonLat } from 'ol/proj';
+import { defaults as ControlDefaults } from 'ol/control/defaults';
 import { defaults as InteractionDefaults } from 'ol/interaction';
 
 class CenterZoomMap {
@@ -54,7 +55,7 @@ class CenterZoomMap {
 
     const center = toLonLat(this.map.getView().getCenter());
     const zoom = this.map.getView().getZoom();
-    let resutlArray = [center[0], center[1], Math.round(zoom)];
+    let resutlArray = [center[0], center[1], zoom];
     return resutlArray.join(',');
   }
 
@@ -66,7 +67,15 @@ class CenterZoomMap {
           source: new OSM(),
         }),
       ],
-      interactions: InteractionDefaults({ mouseWheelZoom: false }),
+      controls: ControlDefaults({
+        zoom: true,
+        zoomOptions: { 
+          delta: .1 
+        },
+      }),
+      interactions: InteractionDefaults({
+        mouseWheelZoom: false
+      }),
       target: this.parent.querySelector('.map') as HTMLElement,
       view: new View({
         zoom: 10,
