@@ -43,7 +43,7 @@ Path to empty tile png (absolute)
 If an image outside the defined bounding box is requested, a standard image is returned.
 Here you can define a path to an alternative image.
 
-Allowed domains to request proxy (absolute)
+Allowed domains to request proxy (comma separated)
 -------------------
 
 If an external domain request the proxy, you can define a list of allowed domains here.
