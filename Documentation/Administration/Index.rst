@@ -42,3 +42,9 @@ Path to empty tile png (absolute)
 
 If an image outside the defined bounding box is requested, a standard image is returned.
 Here you can define a path to an alternative image.
+
+Allowed domains to request proxy (absolute)
+-------------------
+
+If an external domain request the proxy, you can define a list of allowed domains here.
+It's helpful for headless TYPO3 installations, where the frontend and backend are on different domains.

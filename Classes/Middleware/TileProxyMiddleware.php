@@ -74,15 +74,27 @@ class TileProxyMiddleware implements MiddlewareInterface
         }
         return null;
     }
-    
+
     protected function fulfilsHostRestrictions(): bool
     {
         $referrer = @$_SERVER['HTTP_REFERER'];
         $host = @$_SERVER['HTTP_HOST'];
         if(empty($referrer) || empty($host)) return false;
         $referrerPieces = parse_url($referrer);
-        $referrerDomain = $this->getHostname($referrerPieces["host"] ?? '');
+        $referrerDomain = $this->getHostname($referrerPieces["host"]);
         $hostDomain = $this->getHostname($host);
-        return $referrerDomain == $hostDomain;
+        $allowedDomainsList = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['tile_proxy']['allowedDomains'] ?? '';
+        $allowedDomains = GeneralUtility::trimExplode(',', $allowedDomainsList, true);
+        if ($referrerDomain == $hostDomain) {
+            return true;
+        }
+
+        foreach ($allowedDomains as $allowedDomain) {
+            $allowedDomain = $this->getHostname($allowedDomain);
+            if ($referrerDomain == $allowedDomain) {
+                return true;
+            }
+        }
+        return false;
     }
 }

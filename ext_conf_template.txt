@@ -14,4 +14,7 @@ maxTileFileCacheSizeMb = 120
 errorTilePath = 
 
 # cat=basic; type=string; label=Path to empty tile png (absolute)
-emptyTilePath = 
+emptyTilePath =
+
+# cat=basic; type=string; label=Allowed domains to request proxy (comma separated)
+allowedDomains =
