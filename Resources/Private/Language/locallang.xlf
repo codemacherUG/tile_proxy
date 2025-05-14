@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
 	<file source-language="en" datatype="plaintext" date="2023-02-06T09:12:34Z"
-		product-name="tile_proxy">
+		  product-name="tile_proxy">
 		<header />
 		<body>
 			<trans-unit id="doktype_tile_proxy">
@@ -15,7 +15,7 @@
 			</trans-unit>
 			<trans-unit id="tx_tileproxy_flexform.settings.cacheInfo">
 				<source>Current cache size</source>
-			</trans-unit>			
+			</trans-unit>
 			<trans-unit id="tx_tileproxy_flexform.settings.bbox">
 				<source>Bounding box of permitted tiles, Default: '11.86,51.41,12.07,51.55' (lng,lat,lng,lat) (Keep it small. The larger the area, the more storage space is required.)</source>
 			</trans-unit>
@@ -24,7 +24,7 @@
 			</trans-unit>
 			<trans-unit id="tx_tileproxy_flexform.settings.maxCachingZoom">
 				<source>Perform no caching the tile if the zoom is greater than (ignore bounding box)</source>
-			</trans-unit>	
+			</trans-unit>
 			<trans-unit id="tx_tileproxy_flexform.settings.passthrough">
 				<source>Pass tile outside of the bounding box</source>
 			</trans-unit>
@@ -36,6 +36,12 @@
 			</trans-unit>
 			<trans-unit id="tx_tileproxy_flexform.settings.yes">
 				<source>Yes</source>
+			</trans-unit>
+			<trans-unit id="tx_tileproxy_flexform.settings.allowedReferrerDomains">
+				<source>Additional allowed domains</source>
+			</trans-unit>
+			<trans-unit id="tx_tileproxy_flexform.settings.allowedReferrerDomains.description">
+				<source>Additional allowed domains to request this endpoint. Write them seperated by comma.</source>
 			</trans-unit>
 			<trans-unit id="cacheinfo">
 				<source>Size: %s, Files: %s</source>
