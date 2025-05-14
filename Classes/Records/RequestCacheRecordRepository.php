@@ -36,7 +36,7 @@ class RequestCacheRecordRepository extends BaseRecordRepository implements Singl
 
         /** @phpstan-ignore-next-line */
         return $queryBuilder
-          ->execute()
+          ->executeQuery()
           ->fetchAssociative();
     }
 
@@ -62,7 +62,7 @@ class RequestCacheRecordRepository extends BaseRecordRepository implements Singl
             'data' => $data,
             'created' => time()
           ])
-          ->execute();
+          ->executeStatement();
     }
 
     public function deleteRecordsOlderThan(int $time): void
