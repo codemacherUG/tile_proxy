@@ -14,6 +14,17 @@
                             <default>1209600</default>
                         </config>
                     </settings.cacheTime>
+                    <settings.allowedReferrerDomains>
+                        <label>LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.allowedReferrerDomains</label>
+                        <description>LLL:EXT:tile_proxy/Resources/Private/Language/locallang.xlf:tx_tileproxy_flexform.settings.allowedReferrerDomains.description</description>
+                        <config>
+                            <type>input</type>
+                            <eval>trim</eval>
+                            <size>30</size>
+                            <max>255</max>
+                            <placeholder>example.com,api.example.com</placeholder>
+                        </config>
+                    </settings.allowedReferrerDomains>
                 </el>
             </ROOT>
         </sDEF>

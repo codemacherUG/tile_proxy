@@ -37,6 +37,12 @@
 			<trans-unit id="tx_tileproxy_flexform.settings.yes">
 				<source>Yes</source>
 			</trans-unit>
+			<trans-unit id="tx_tileproxy_flexform.settings.allowedReferrerDomains">
+				<source>Additional allowed domains</source>
+			</trans-unit>
+			<trans-unit id="tx_tileproxy_flexform.settings.allowedReferrerDomains.description">
+				<source>Additional allowed domains to request this endpoint. Write them seperated by comma.</source>
+			</trans-unit>
 			<trans-unit id="cacheinfo">
 				<source>Size: %s, Files: %s</source>
 			</trans-unit>

@@ -67,6 +67,12 @@ Each tile is stored as an image on your server.
 This time indicates on the one hand how long this image is not updated again by a request to OpenStreetMap,
 on the other hand this time is sent as caching time to the client for each tile.
 
+Additional allowed domains
+~~~~~~~~~~
+
+If an external domain requests the proxy, you can define a list of allowed referrer domains here.
+In case this is not configured the settings from the extension configuration are used.
+
 
 Nominatim Proxy Endpoint
 ----------
@@ -78,3 +84,9 @@ Caching Time (in s) for each request
 
 Each request to nominatim is stored in the database.
 This time in seconds determines how long the entry is valid and remains stored.
+
+Additional allowed domains
+~~~~~~~~~~
+
+If an external domain requests the proxy, you can define a list of allowed referrer domains here.
+In case this is not configured the settings from the extension configuration are used.
