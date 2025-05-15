@@ -71,30 +71,26 @@ class TileProxyMiddleware implements MiddlewareInterface
         return $flex != null && array_key_exists("settings", $flex) ? $flex["settings"] : [];
     }
 
-    protected function getHostname(string $fullhost): ?string
-    {
-        if(preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $fullhost, $regs)) {
-            return $regs['domain'];
-        }
-        return null;
-    }
 
     protected function fulfilsHostRestrictions(array $flexSettings): bool
     {
         $referrer = @$_SERVER['HTTP_REFERER'];
         $host = @$_SERVER['HTTP_HOST'];
-        if(empty($referrer) || empty($host)) return false;
+        if(empty($referrer) || empty($host)) {
+            return false;
+        }
         $referrerPieces = parse_url($referrer);
-        $referrerDomain = $this->getHostname($referrerPieces["host"]);
-        $hostDomain = $this->getHostname($host);
-        if ($referrerDomain == $hostDomain) {
+        $referrerDomain = $referrerPieces["host"] ?? '';
+        if(empty($referrerDomain)) {
+            return false;
+        }
+        if ($referrerDomain == $host) {
             return true;
         }
 
         $allowedReferrerDomains = $this->parseAllowedReferrerDomains($flexSettings);
 
         foreach ($allowedReferrerDomains as $allowedReferrerDomain) {
-            $allowedReferrerDomain = $this->getHostname($allowedReferrerDomain);
             if ($referrerDomain === $allowedReferrerDomain) {
                 return true;
             }

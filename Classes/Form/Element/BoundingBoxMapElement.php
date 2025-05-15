@@ -28,7 +28,6 @@ class BoundingBoxMapElement extends MapElement
                 'TYPO3/CMS/TileProxy/BoundingBoxMapElement'
             );
         } else {
-            /** @phpstan-ignore-next-line */
             $resultArray['javaScriptModules'][] = JavaScriptModuleInstruction::create('@codemacher/tile_proxy/BoundingBoxMapElement.js');
         }
 

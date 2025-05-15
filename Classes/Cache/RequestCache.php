@@ -14,7 +14,6 @@ class RequestCache
 
     public function __construct()
     {
-        /** @phpstan-ignore-next-line */
         $this->repo = GeneralUtility::makeInstance(RequestCacheRecordRepository::class);
     }
 

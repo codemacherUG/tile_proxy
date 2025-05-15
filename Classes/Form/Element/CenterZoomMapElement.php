@@ -20,7 +20,6 @@ class CenterZoomMapElement extends MapElement
                 'TYPO3/CMS/TileProxy/CenterZoomMapElement'
             );
         } else {
-            /* @phpstan-ignore-next-line */
             $resultArray['javaScriptModules'][] = JavaScriptModuleInstruction::create('@codemacher/tile_proxy/CenterZoomMapElement.js');
         }
 

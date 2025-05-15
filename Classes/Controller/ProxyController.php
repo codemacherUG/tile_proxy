@@ -19,7 +19,6 @@ abstract class ProxyController
 
     public function __construct()
     {
-        /** @phpstan-ignore-next-line */
         $this->streamFactory = GeneralUtility::makeInstance(StreamFactory::class);
     }
 
