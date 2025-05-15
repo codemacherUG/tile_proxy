@@ -51,25 +51,21 @@ class TileProxyMiddleware implements MiddlewareInterface
      */
     protected function performProxy(string $classname, ServerRequestInterface $request, RequestHandlerInterface $handler, array $pageRecord): ResponseInterface
     {
-        $flexSettings = $this->getFlexSettings($pageRecord);
-
-        if (!$this->fulfilsHostRestrictions($flexSettings)) {
+        if (!$this->fulfilsHostRestrictions()) {
             return new JsonResponse(['error' => Constants::ERROR_INVALID_HOST], 403);
         }
+
+        $flexform = array_key_exists('tx_tileproxy_flexform', $pageRecord) ? $pageRecord['tx_tileproxy_flexform'] : "";
+        /** @var FlexFormService $ffs */
+        $ffs = GeneralUtility::makeInstance(FlexFormService::class);
+        $flex = $ffs->convertFlexFormContentToArray($flexform);
+        $flexSettings = $flex != null && array_key_exists("settings", $flex) ? $flex["settings"] : [];
 
         /** @var ProxyController $proxy */
         $proxy = GeneralUtility::makeInstance($classname);
         return $proxy->process($flexSettings, $request, $handler);
     }
 
-    protected function getFlexSettings(array $pageRecord): array
-    {
-        $flexform = array_key_exists('tx_tileproxy_flexform', $pageRecord) ? $pageRecord['tx_tileproxy_flexform'] : "";
-        /** @var FlexFormService $ffs */
-        $ffs = GeneralUtility::makeInstance(FlexFormService::class);
-        $flex = $ffs->convertFlexFormContentToArray($flexform);
-        return $flex != null && array_key_exists("settings", $flex) ? $flex["settings"] : [];
-    }
 
     protected function getHostname(string $fullhost): ?string
     {
@@ -78,8 +74,8 @@ class TileProxyMiddleware implements MiddlewareInterface
         }
         return null;
     }
-
-    protected function fulfilsHostRestrictions(array $flexSettings): bool
+    
+    protected function fulfilsHostRestrictions(): bool
     {
         $referrer = @$_SERVER['HTTP_REFERER'];
         $host = @$_SERVER['HTTP_HOST'];
@@ -87,29 +83,6 @@ class TileProxyMiddleware implements MiddlewareInterface
         $referrerPieces = parse_url($referrer);
         $referrerDomain = $this->getHostname($referrerPieces["host"]);
         $hostDomain = $this->getHostname($host);
-        if ($referrerDomain == $hostDomain) {
-            return true;
-        }
-
-        $allowedReferrerDomains = $this->parseAllowedReferrerDomains($flexSettings);
-
-        foreach ($allowedReferrerDomains as $allowedReferrerDomain) {
-            $allowedReferrerDomain = $this->getHostname($allowedReferrerDomain);
-            if ($referrerDomain === $allowedReferrerDomain) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected function parseAllowedReferrerDomains(array $flexSettings): array
-    {
-        $flexFormAllowedDomains = $flexSettings['allowedReferrerDomains'] ?? '';
-        if ($flexFormAllowedDomains !== '') {
-            return GeneralUtility::trimExplode(',', $flexFormAllowedDomains, true);
-        }
-
-        $allowedDomainsList = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['tile_proxy']['allowedReferrerDomains'] ?? '';
-        return GeneralUtility::trimExplode(',', $allowedDomainsList, true);
+        return $referrerDomain == $hostDomain;
     }
 }

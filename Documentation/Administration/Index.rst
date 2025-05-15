@@ -42,12 +42,3 @@ Path to empty tile png (absolute)
 
 If an image outside the defined bounding box is requested, a standard image is returned.
 Here you can define a path to an alternative image.
-
-Globally allowed referrer domains to request proxy (comma separated)
--------------------
-
-If an external domain request the proxy, you can define a list of globally allowed referrer domains here.
-It's helpful for headless TYPO3 installations, where the frontend and backend are on different domains
-and you want to configure it by environment variables.
-This config is a fallback for the allowed referrer domains configured in the page settings of the endpoint.
-If domains in the config of the page settings, this config won't be used.

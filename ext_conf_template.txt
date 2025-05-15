@@ -11,10 +11,7 @@ maxDbRecordsToCache = 10000
 maxTileFileCacheSizeMb = 120
 
 # cat=basic; type=string; label=Path to error tile png (absolute)
-errorTilePath =
+errorTilePath = 
 
 # cat=basic; type=string; label=Path to empty tile png (absolute)
-emptyTilePath =
-
-# cat=basic; type=string; label=Globally allowed referrer domains to request proxy (comma separated)
-allowedReferrerDomains =
+emptyTilePath = 

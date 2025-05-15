@@ -50,7 +50,7 @@ If the tile must be loaded and is not cached, this request will be mapped to:
     https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
 
 
-The http referrer must be your own domain, localhost or configured in page settings or extension configuration, otherwise you will receive error 1001.
+The http referrer must be your own domain or localhost, otherwise you will receive error 1001.
 
 
 Leaflet Example
@@ -117,4 +117,4 @@ If the request must be loaded and is not cached, this request will be mapped to:
     https://nominatim.openstreetmap.org/search?q=06120&format=json&addressdetails=1
 
 
-The http referrer must be your own domain, localhost or configured in page settings or extension configuration, otherwise you will receive error 1001.
+The http referrer must be your own domain or localhost, otherwise you will receive error 1001.
