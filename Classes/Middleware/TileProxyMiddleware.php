@@ -51,38 +51,62 @@ class TileProxyMiddleware implements MiddlewareInterface
      */
     protected function performProxy(string $classname, ServerRequestInterface $request, RequestHandlerInterface $handler, array $pageRecord): ResponseInterface
     {
-        if (!$this->fulfilsHostRestrictions()) {
+        $flexSettings = $this->getFlexSettings($pageRecord);
+
+        if (!$this->fulfilsHostRestrictions($flexSettings)) {
             return new JsonResponse(['error' => Constants::ERROR_INVALID_HOST], 403);
         }
-
-        $flexform = array_key_exists('tx_tileproxy_flexform', $pageRecord) ? $pageRecord['tx_tileproxy_flexform'] : "";
-        /** @var FlexFormService $ffs */
-        $ffs = GeneralUtility::makeInstance(FlexFormService::class);
-        $flex = $ffs->convertFlexFormContentToArray($flexform);
-        $flexSettings = $flex != null && array_key_exists("settings", $flex) ? $flex["settings"] : [];
 
         /** @var ProxyController $proxy */
         $proxy = GeneralUtility::makeInstance($classname);
         return $proxy->process($flexSettings, $request, $handler);
     }
 
-
-    protected function getHostname(string $fullhost): ?string
+    protected function getFlexSettings(array $pageRecord): array
     {
-        if(preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $fullhost, $regs)) {
-            return $regs['domain'];
-        }
-        return null;
+        $flexform = array_key_exists('tx_tileproxy_flexform', $pageRecord) ? $pageRecord['tx_tileproxy_flexform'] : "";
+        /** @var FlexFormService $ffs */
+        $ffs = GeneralUtility::makeInstance(FlexFormService::class);
+        $flex = $ffs->convertFlexFormContentToArray($flexform);
+        return $flex != null && array_key_exists("settings", $flex) ? $flex["settings"] : [];
     }
-    
-    protected function fulfilsHostRestrictions(): bool
+
+
+    protected function fulfilsHostRestrictions(array $flexSettings): bool
     {
         $referrer = @$_SERVER['HTTP_REFERER'];
         $host = @$_SERVER['HTTP_HOST'];
-        if(empty($referrer) || empty($host)) return false;
+        if(empty($referrer) || empty($host)) {
+            return false;
+        }
         $referrerPieces = parse_url($referrer);
-        $referrerDomain = $this->getHostname($referrerPieces["host"] ?? '');
-        $hostDomain = $this->getHostname($host);
-        return $referrerDomain == $hostDomain;
+        $referrerDomain = $referrerPieces["host"] ?? '';
+        if(empty($referrerDomain)) {
+            return false;
+        }
+        if ($referrerDomain == $host) {
+            return true;
+        }
+
+        $allowedReferrerDomains = $this->parseAllowedReferrerDomains($flexSettings);
+
+        foreach ($allowedReferrerDomains as $allowedReferrerDomain) {
+            if ($referrerDomain === $allowedReferrerDomain) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    protected function parseAllowedReferrerDomains(array $flexSettings): array
+    {
+        $flexFormAllowedDomains = $flexSettings['allowedReferrerDomains'] ?? '';
+        if ($flexFormAllowedDomains !== '') {
+            return GeneralUtility::trimExplode(',', $flexFormAllowedDomains, true);
+        }
+
+        $allowedDomainsList = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['tile_proxy']['allowedReferrerDomains'] ?? '';
+        return GeneralUtility::trimExplode(',', $allowedDomainsList, true);
     }
 }

@@ -26,7 +26,6 @@ class NominatimProxyController extends ProxyController
     ) {
         parent::__construct();
         $this->requestFactory = $requestFactory;
-
         $this->requestCache = GeneralUtility::makeInstance((RequestCache::class));
         /** @var ExtensionConfiguration $extConf */
         $extConf = GeneralUtility::makeInstance(ExtensionConfiguration::class);
