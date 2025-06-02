@@ -34,9 +34,8 @@ class RequestCacheRecordRepository extends BaseRecordRepository implements Singl
         $queryBuilder
           ->andWhere($queryBuilder->expr()->eq('requestcache.url_hash', $queryBuilder->createNamedParameter($hash, Connection::PARAM_STR)));
 
-        /** @phpstan-ignore-next-line */
         return $queryBuilder
-          ->execute()
+          ->executeQuery()
           ->fetchAssociative();
     }
 
@@ -62,7 +61,7 @@ class RequestCacheRecordRepository extends BaseRecordRepository implements Singl
             'data' => $data,
             'created' => time()
           ])
-          ->execute();
+          ->executeStatement();
     }
 
     public function deleteRecordsOlderThan(int $time): void

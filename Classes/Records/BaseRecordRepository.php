@@ -55,7 +55,7 @@ abstract class BaseRecordRepository
             $queryBuilder->set($column, $value);
         }
 
-        $queryBuilder->execute();
+        $queryBuilder->executeStatement();
     }
 
     public static function getExceptionTime(): int
