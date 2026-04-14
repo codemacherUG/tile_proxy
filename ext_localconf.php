@@ -4,12 +4,10 @@ defined('TYPO3') or die('Access denied.');
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
 use Codemacher\TileProxy\Cache\CacheBackend;
 use Codemacher\TileProxy\Cache\CleanUpDbCacheBackend;
-use Codemacher\TileProxy\Constants;
 
 (static function ($extKey = 'tile_proxy'): void {
 
