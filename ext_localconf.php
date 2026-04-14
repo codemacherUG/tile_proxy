@@ -4,8 +4,6 @@ defined('TYPO3') or die('Access denied.');
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
-use TYPO3\CMS\Core\Imaging\IconRegistry;
-use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
@@ -24,7 +22,7 @@ use Codemacher\TileProxy\Constants;
           'frontend' => VariableFrontend::class,
           'backend' => CacheBackend::class,
           'options' => ['cacheType' => 'cache'],
-          'groups' => ['all'],
+          'groups' => ['all'], 
         ];
     }
 
@@ -37,31 +35,6 @@ use Codemacher\TileProxy\Constants;
           'groups' => ['all'],
         ];
     }
-
-    $iconRegistry = GeneralUtility::makeInstance(IconRegistry::class);
-    $iconRegistry
-      ->registerIcon(
-          'tile-proxy',
-          SvgIconProvider::class,
-          [
-          'source' => 'EXT:' . $extKey . '/Resources/Public/Icons/doktype-tileproxy.svg',
-      ]
-      );
-
-    $iconRegistry
-      ->registerIcon(
-          'nominatim-proxy',
-          SvgIconProvider::class,
-          [
-          'source' => 'EXT:' . $extKey . '/Resources/Public/Icons/doktype-nominatimproxy.svg',
-      ]
-      );
-
-    // Allow backend users to drag and drop the new page type:
-    ExtensionManagementUtility::addUserTSConfig(
-        'options.pageTree.doktypesToShowInNewPageDragArea := addToList(' . Constants::DOKTYPE_TILE_PROXY . ',' .  Constants::DOKTYPE_NOMINATIM_PROXY . ')'
-    );
-
 
 
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1676502776] = [

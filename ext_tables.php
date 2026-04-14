@@ -7,7 +7,7 @@ defined('TYPO3') or die();
 
 (static function (): void {
 
-  $dokTypeRegistry = GeneralUtility::makeInstance(PageDoktypeRegistry::class);
+  /*$dokTypeRegistry = GeneralUtility::makeInstance(PageDoktypeRegistry::class);
   $dokTypeRegistry->add(
     Codemacher\TileProxy\Constants::DOKTYPE_TILE_PROXY,
     [
@@ -21,5 +21,5 @@ defined('TYPO3') or die();
           'allowedTables' => '*',
       ],
   );
-
+*/
 })();
