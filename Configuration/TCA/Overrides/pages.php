@@ -26,7 +26,7 @@ use Codemacher\TileProxy\Constants;
         'doktype',
         [
           'label' => 'LLL:EXT:' . $extKey . '/Resources/Private/Language/locallang.xlf:doktype_tile_proxy',
-          'value' => Constants::DOKTYPE_TILE_PROXY,
+          'value' => (string)Constants::DOKTYPE_TILE_PROXY,
           'icon' => 'tile-proxy',
           'group' => 'special',
         ],
@@ -39,7 +39,7 @@ use Codemacher\TileProxy\Constants;
         'doktype',
         [
           'label' => 'LLL:EXT:' . $extKey . '/Resources/Private/Language/locallang.xlf:doktype_nominatim_proxy',
-          'value' => Constants::DOKTYPE_NOMINATIM_PROXY,
+          'value' => (string)Constants::DOKTYPE_NOMINATIM_PROXY,
           'icon' => 'nominatim-proxy',
           'group' => 'special',
         ],
