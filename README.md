@@ -1,7 +1,7 @@
 # TYPO3 extension `tile_proxy`
 
 [![TYPO3 V13](https://img.shields.io/badge/TYPO3-13-orange.svg)](https://get.typo3.org/version/13)
-[![TYPO3 V12](https://img.shields.io/badge/TYPO3-12-orange.svg)](https://get.typo3.org/version/12)
+[![TYPO3 V14](https://img.shields.io/badge/TYPO3-14-orange.svg)](https://get.typo3.org/version/14)
 [![License](https://img.shields.io/github/license/codemacherUG/tile_proxy)](https://packagist.org/packages/codemacher/tile_proxy)
 [![Total downloads](https://poser.pugx.org/codemacher/tile_proxy/downloads.svg)](https://packagist.org/packages/codemacher/tile_proxy)
 
