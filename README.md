@@ -1,3 +1,9 @@
+> [!CAUTION]
+> **This repository has been moved.**
+>
+> **Active development:** https://git.codemacher.de/codemacher/tile_proxy  
+> Please update your remotes and bookmarks.
+
 # TYPO3 extension `tile_proxy`
 
 [![TYPO3 V13](https://img.shields.io/badge/TYPO3-13-orange.svg)](https://get.typo3.org/version/13)
