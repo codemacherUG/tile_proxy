@@ -1,7 +1,7 @@
 > [!CAUTION]
 > **This repository has been moved.**
 >
-> **Active development:** https://git.codemacher.de/codemacher/tile_proxy  
+> **Active development:** https://codeberg.org/codemacher/tile_proxy  
 > Please update your remotes and bookmarks.
 
 # TYPO3 extension `tile_proxy`
@@ -17,6 +17,6 @@ A proxy is also provided for geocoding nominatim.
 
 |                  | URL                                                             |
 |------------------|-----------------------------------------------------------------|
-| **Repository:**  | https://github.com/codemacherUG/tile_proxy/                     |
+| **Repository:**  | https://codeberg.org/codemacher/tile_proxy                      |
 | **Read online:** | https://docs.typo3.org/p/codemacher/tile_proxy/main/en-us/      |
 | **TER:**         | https://extensions.typo3.org/extension/tile_proxy               |
